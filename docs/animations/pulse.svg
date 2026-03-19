@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="160" height="192">
+  <rect width="200" height="240" fill="#060c14" rx="14"/>
+
+  <!-- label -->
+  <text x="100" y="22" fill="#88d8f8" font-family="system-ui,sans-serif" font-size="10" font-weight="700"
+        letter-spacing="2" text-anchor="middle">PULSE</text>
+  <text x="100" y="218" fill="#4a6a88" font-family="system-ui,sans-serif" font-size="9"
+        text-anchor="middle">Nod forward and back slowly · 0.5–1.5 Hz</text>
+
+  <!-- phone group: slow rhythmic nod -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate"
+      values="0 100 175; -14 100 175; 0 100 175; 14 100 175; 0 100 175"
+      keyTimes="0; 0.25; 0.5; 0.75; 1"
+      dur="2s" repeatCount="indefinite" calcMode="spline"
+      keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
+    <!-- phone body -->
+    <rect x="70" y="75" width="60" height="100" rx="9" fill="#1e2a3a" stroke="#38b0d8" stroke-width="1.5"/>
+    <!-- screen -->
+    <rect x="75" y="83" width="50" height="80" rx="5" fill="#0a1628"/>
+    <!-- resonance glow -->
+    <rect x="75" y="83" width="50" height="80" rx="5" fill="rgba(56,176,216,0.1)">
+      <animate attributeName="fill"
+        values="rgba(56,176,216,0.05);rgba(56,176,216,0.2);rgba(56,176,216,0.05)"
+        dur="2s" repeatCount="indefinite"/>
+    </rect>
+    <!-- waveform on screen -->
+    <path d="M79,123 Q85,113 91,123 Q97,133 103,123 Q109,113 115,123 Q119,117 121,120"
+          fill="none" stroke="#38b0d8" stroke-width="1.8" opacity="0.85">
+      <animate attributeName="d"
+        values="M79,123 Q85,113 91,123 Q97,133 103,123 Q109,113 115,123 Q119,117 121,120;M79,127 Q85,117 91,127 Q97,137 103,127 Q109,117 115,127 Q119,121 121,124;M79,123 Q85,113 91,123 Q97,133 103,123 Q109,113 115,123 Q119,117 121,120"
+        dur="2s" repeatCount="indefinite"/>
+    </path>
+    <line x1="79" y1="113" x2="121" y2="113" stroke="#38b0d8" stroke-width="0.8" opacity="0.3"/>
+    <line x1="79" y1="133" x2="121" y2="133" stroke="#38b0d8" stroke-width="0.8" opacity="0.3"/>
+    <!-- speaker -->
+    <rect x="88" y="79" width="24" height="3" rx="1.5" fill="#1a3a4a"/>
+    <!-- home button -->
+    <circle cx="100" cy="173" r="5" fill="none" stroke="#1a3a4a" stroke-width="1.5"/>
+  </g>
+</svg>

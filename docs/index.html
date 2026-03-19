@@ -19,6 +19,11 @@
       --gs-color:    #3d9be9;
       --tr-color:    #e07040;
       --or-color:    #9060e8;
+      --an-color:    #30d090;
+      --su-color:    #e8c030;
+      --pu-color:    #38b0d8;
+      --pi-color:    #e040b0;
+      --ca-color:    #ff5824;
     }
 
     html { scroll-behavior: smooth; }
@@ -121,6 +126,11 @@
     .card.gs:hover { border-color: rgba(61,155,233,0.5); }
     .card.tr:hover { border-color: rgba(224,112,64,0.5); }
     .card.or:hover { border-color: rgba(144,96,232,0.5); }
+    .card.an:hover { border-color: rgba(48,208,144,0.5); }
+    .card.su:hover { border-color: rgba(232,192,48,0.5); }
+    .card.pu:hover { border-color: rgba(56,176,216,0.5); }
+    .card.pi:hover { border-color: rgba(224,64,176,0.5); }
+    .card.ca:hover { border-color: rgba(255,88,36,0.5); }
     .card-canvas-wrap { height: 210px; }
     .card-canvas { width: 100%; height: 100%; display: block; }
     .card-body { padding: 1.4rem; }
@@ -132,6 +142,11 @@
     .gs .card-tag { background: rgba(61,155,233,0.2); color: #7ac4f8; }
     .tr .card-tag { background: rgba(224,112,64,0.2); color: #f0a878; }
     .or .card-tag { background: rgba(144,96,232,0.2); color: #c0a0f8; }
+    .an .card-tag { background: rgba(48,208,144,0.2); color: #80e8c0; }
+    .su .card-tag { background: rgba(232,192,48,0.2); color: #f0d878; }
+    .pu .card-tag { background: rgba(56,176,216,0.2); color: #88d8f8; }
+    .pi .card-tag { background: rgba(224,64,176,0.2); color: #f080d8; }
+    .ca .card-tag { background: rgba(255,88,36,0.2); color: #ff9868; }
     .card-body h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.45rem; }
     .card-body p { color: var(--muted); font-size: 0.88rem; line-height: 1.65; }
     .card-meta {
@@ -249,7 +264,7 @@
 <!-- ── COMPONENTS ───────────────────────────────────────────── -->
 <section class="section" id="components">
   <div class="section-label">Motion Primitives</div>
-  <h2 class="section-title">Three Languages of Motion</h2>
+  <h2 class="section-title">Eight Languages of Motion</h2>
   <p class="section-desc">Each component captures a distinct physical gesture and maps it to collective meaning — turning a room full of devices into a single expressive instrument.</p>
 
   <div class="cards">
@@ -301,6 +316,91 @@
           <span>🔄 3 – 6 s/rev</span>
           <span>📐 270° arc</span>
           <span>💡 Alignment</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANCHOR -->
+    <div class="card an">
+      <div class="card-canvas-wrap">
+        <canvas class="card-canvas" id="canvas-an"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">ANCHOR</div>
+        <h3>Complete Sustained Stillness</h3>
+        <p>Hold your device perfectly motionless. When a room goes still together it signals what debate cannot — collective resolution and the quiet certainty of a made-up mind.</p>
+        <div class="card-meta">
+          <span>⬛ &lt; 1° deviation</span>
+          <span>⏱ 3 s hold</span>
+          <span>💡 Resolve</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SURGE -->
+    <div class="card su">
+      <div class="card-canvas-wrap">
+        <canvas class="card-canvas" id="canvas-su"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">SURGE</div>
+        <h3>Sharp Upward Snap</h3>
+        <p>Snap your device upward in a burst of energy. Collective surges timestamp excitement to the exact content moment that triggered it — precision no applause meter can match.</p>
+        <div class="card-meta">
+          <span>⚡ ≥ 120°/s</span>
+          <span>⏱ &lt; 0.5 s snap</span>
+          <span>💡 Excitement</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PULSE -->
+    <div class="card pu">
+      <div class="card-canvas-wrap">
+        <canvas class="card-canvas" id="canvas-pu"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">PULSE</div>
+        <h3>Rhythmic Forward-Back Nod</h3>
+        <p>Rock your device slowly forward and back like nodding. Sustained collective pulse creates a shared waveform — agreement made visible as a living wave across the room.</p>
+        <div class="card-meta">
+          <span>〰 0.5 – 1.5 Hz</span>
+          <span>📐 8 – 20° arc</span>
+          <span>💡 Agreement</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIVOT -->
+    <div class="card pi">
+      <div class="card-canvas-wrap">
+        <canvas class="card-canvas" id="canvas-pi"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">PIVOT</div>
+        <h3>Sharp 90° Yaw Rotation</h3>
+        <p>Snap your device a quarter-turn and hold. Collective pivots mark the precise moment a room changes its mind — the first tool that timestamps opinion change rather than just final position.</p>
+        <div class="card-meta">
+          <span>🔄 80 – 100° snap</span>
+          <span>⏱ 1.5 s hold</span>
+          <span>💡 Reframing</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CASCADE -->
+    <div class="card ca">
+      <div class="card-canvas-wrap">
+        <canvas class="card-canvas" id="canvas-ca"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">CASCADE</div>
+        <h3>Progressively Deepening Tilt</h3>
+        <p>Let your device tilt ever further forward, slow and unstoppable. The escalation index captures not just how the crowd feels but how fast that feeling is accelerating.</p>
+        <div class="card-meta">
+          <span>📈 ≥ 25° deepening</span>
+          <span>⏱ 3 – 10 s ramp</span>
+          <span>💡 Escalation</span>
         </div>
       </div>
     </div>
@@ -725,6 +825,400 @@ function fitCanvas(canvas) {
   window.addEventListener('resize', resize);
   resize();
   frame();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   ANCHOR CARD VIZ
+═══════════════════════════════════════════════════════════ */
+(function anchorCard() {
+  const canvas = document.getElementById('canvas-an');
+  const ctx    = canvas.getContext('2d');
+  let W, H, t = 0, score = 0, target = 0;
+  let crystals = [];
+
+  function resize() {
+    fitCanvas(canvas);
+    W = canvas.width; H = canvas.height;
+    crystals = [];
+  }
+
+  function hexPoly(cx, cy, r, angle) {
+    ctx.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const a = angle + (i / 6) * Math.PI * 2;
+      const x = cx + Math.cos(a) * r;
+      const y = cy + Math.sin(a) * r;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    const g = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H)*0.6);
+    g.addColorStop(0, '#0a1a14'); g.addColorStop(1, '#060c14');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    t += 0.015;
+    score = lerp(score, target, 0.04);
+    const frac = score / 100;
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.025)'; ctx.lineWidth = 1;
+    for (let i = 0; i < 9; i++) {
+      const y = (i / 8) * H;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y + (i % 2 ? 3 : -3)); ctx.stroke();
+    }
+
+    if (score > 5 && Math.random() < 0.03 + frac * 0.04) {
+      crystals.push({
+        x: W / 2 + rand(-W * 0.36, W * 0.36),
+        y: H / 2 + rand(-H * 0.32, H * 0.32),
+        size: rand(5, 13), life: 1, angle: rand(0, Math.PI),
+      });
+    }
+    crystals = crystals.filter(c => c.life > 0);
+    crystals.forEach(c => {
+      c.life -= 0.003;
+      hexPoly(c.x, c.y, c.size * frac, c.angle);
+      ctx.fillStyle = `rgba(48,208,144,${c.life * frac * 0.3})`;
+      ctx.fill();
+      ctx.strokeStyle = `rgba(128,232,192,${c.life * frac * 0.65})`;
+      ctx.lineWidth = 1; ctx.stroke();
+    });
+
+    if (frac > 0.4) {
+      const g2 = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, 55 * frac);
+      g2.addColorStop(0, `rgba(48,208,144,${frac * 0.18})`);
+      g2.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
+    }
+
+    const bPad = 18, bY = H - 18, bH = 5;
+    ctx.fillStyle = 'rgba(255,255,255,0.09)';
+    ctx.fillRect(bPad, bY, W - bPad * 2, bH);
+    if (score > 0) {
+      const bg = ctx.createLinearGradient(bPad, 0, bPad + (W - bPad * 2) * score / 100, 0);
+      bg.addColorStop(0, '#1a8050'); bg.addColorStop(1, '#30d090');
+      ctx.fillStyle = bg;
+      ctx.fillRect(bPad, bY, (W - bPad * 2) * score / 100, bH);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  let at = 0;
+  setInterval(() => { at += 0.015; target = (Math.sin(at * 0.6) * 0.5 + 0.5) * 72 + 8; }, 50);
+  window.addEventListener('resize', resize);
+  resize(); frame();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   SURGE CARD VIZ
+═══════════════════════════════════════════════════════════ */
+(function surgeCard() {
+  const canvas = document.getElementById('canvas-su');
+  const ctx    = canvas.getContext('2d');
+  let W, H, t = 0, score = 0, target = 0;
+  let bursts = [];
+
+  function resize() { fitCanvas(canvas); W = canvas.width; H = canvas.height; }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#060c14'; ctx.fillRect(0, 0, W, H);
+
+    t += 0.02;
+    score = lerp(score, target, 0.05);
+    const frac = score / 100;
+
+    if (score > 8 && Math.random() < 0.02 + frac * 0.07) {
+      bursts.push({
+        x: W / 2 + rand(-W * 0.28, W * 0.28),
+        y: H / 2 + rand(-H * 0.28, H * 0.28),
+        r: 0, maxR: rand(28, 68), life: 1, hue: rand(38, 54),
+      });
+    }
+    bursts = bursts.filter(b => b.life > 0);
+    bursts.forEach(b => {
+      b.r += (b.maxR - b.r) * 0.12;
+      b.life -= 0.025;
+      const rays = 12;
+      for (let i = 0; i < rays; i++) {
+        const angle = (i / rays) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(b.x + Math.cos(angle) * b.r * 0.18, b.y + Math.sin(angle) * b.r * 0.18);
+        ctx.lineTo(b.x + Math.cos(angle) * b.r, b.y + Math.sin(angle) * b.r);
+        ctx.strokeStyle = `hsla(${b.hue},90%,70%,${b.life * 0.6})`;
+        ctx.lineWidth = 1.5; ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r * 0.14, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${b.hue},90%,85%,${b.life * 0.85})`; ctx.fill();
+    });
+
+    if (frac > 0.25) {
+      const gG = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H) * 0.55);
+      gG.addColorStop(0, `rgba(240,200,50,${frac * 0.08})`);
+      gG.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = gG; ctx.fillRect(0, 0, W, H);
+    }
+
+    const bPad = 18, bY = H - 18, bH = 5;
+    ctx.fillStyle = 'rgba(255,255,255,0.09)';
+    ctx.fillRect(bPad, bY, W - bPad * 2, bH);
+    if (score > 0) {
+      const bg = ctx.createLinearGradient(bPad, 0, bPad + (W - bPad * 2) * score / 100, 0);
+      bg.addColorStop(0, '#a08010'); bg.addColorStop(1, '#e8c030');
+      ctx.fillStyle = bg;
+      ctx.fillRect(bPad, bY, (W - bPad * 2) * score / 100, bH);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  let at = 0;
+  setInterval(() => {
+    at += 0.035;
+    target = Math.pow(Math.max(0, Math.sin(at * 2.2)), 3) * 85 + 5;
+  }, 50);
+  window.addEventListener('resize', resize);
+  resize(); frame();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   PULSE CARD VIZ
+═══════════════════════════════════════════════════════════ */
+(function pulseCard() {
+  const canvas = document.getElementById('canvas-pu');
+  const ctx    = canvas.getContext('2d');
+  let W, H, t = 0, score = 0, target = 0;
+
+  function resize() { fitCanvas(canvas); W = canvas.width; H = canvas.height; }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#03101d'); g.addColorStop(1, '#051822');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    t += 0.016;
+    score = lerp(score, target, 0.04);
+    const frac = score / 100;
+
+    for (let w = 0; w < 3; w++) {
+      const yBase = H * (0.45 + w * 0.08);
+      const amp   = (8 + frac * 22) * (1 - w * 0.25);
+      const freq  = 0.018 - w * 0.003;
+      const spd   = (0.9 + frac) * (1 - w * 0.15);
+      ctx.beginPath(); ctx.moveTo(0, yBase);
+      for (let x = 0; x <= W; x += 3) {
+        ctx.lineTo(x, yBase + Math.sin(x * freq + t * spd) * amp
+                           + Math.cos(x * freq * 2.1 + t * spd * 0.5) * amp * 0.3);
+      }
+      ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+      const hue = lerp(200, 40, frac);
+      ctx.fillStyle = `hsla(${hue},70%,55%,${0.12 + frac * 0.15 - w * 0.04})`;
+      ctx.fill();
+    }
+
+    const midY = H * 0.5;
+    ctx.beginPath(); ctx.moveTo(0, midY);
+    for (let x = 0; x <= W; x += 2) {
+      ctx.lineTo(x, midY + Math.sin(x * 0.022 + t * 1.1) * (6 + frac * 30));
+    }
+    ctx.strokeStyle = `hsla(${lerp(195, 40, frac)},75%,65%,${0.25 + frac * 0.55})`;
+    ctx.lineWidth = 1.5 + frac; ctx.stroke();
+
+    if (frac > 0.5) {
+      const gG = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, H * 0.55);
+      gG.addColorStop(0, `rgba(56,176,216,${frac * 0.12})`);
+      gG.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = gG; ctx.fillRect(0, 0, W, H);
+    }
+
+    const bPad = 18, bY = H - 18, bH = 5;
+    ctx.fillStyle = 'rgba(255,255,255,0.09)';
+    ctx.fillRect(bPad, bY, W - bPad * 2, bH);
+    if (score > 0) {
+      const bg = ctx.createLinearGradient(bPad, 0, bPad + (W - bPad * 2) * score / 100, 0);
+      bg.addColorStop(0, '#1870a0'); bg.addColorStop(1, '#38b0d8');
+      ctx.fillStyle = bg;
+      ctx.fillRect(bPad, bY, (W - bPad * 2) * score / 100, bH);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  let at = 0;
+  setInterval(() => { at += 0.02; target = (Math.sin(at * 0.8) * 0.5 + 0.5) * 68 + 12; }, 50);
+  window.addEventListener('resize', resize);
+  resize(); frame();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   PIVOT CARD VIZ
+═══════════════════════════════════════════════════════════ */
+(function pivotCard() {
+  const canvas = document.getElementById('canvas-pi');
+  const ctx    = canvas.getContext('2d');
+  let W, H, t = 0, score = 0, target = 0;
+  let arrows = [];
+
+  function resize() {
+    fitCanvas(canvas); W = canvas.width; H = canvas.height;
+    arrows = Array.from({ length: 16 }, (_, i) => ({
+      x: ((i % 4) / 3) * W * 0.68 + W * 0.16,
+      y: (Math.floor(i / 4) / 3) * H * 0.62 + H * 0.16,
+      angle: 0, targetAngle: 0, pivoting: false,
+    }));
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    const g = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H) * 0.7);
+    g.addColorStop(0, '#160920'); g.addColorStop(1, '#060c14');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    t += 0.018;
+    score = lerp(score, target, 0.045);
+    const frac = score / 100;
+
+    ctx.strokeStyle = `rgba(224,64,176,${0.04 + frac * 0.08})`; ctx.lineWidth = 1;
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(W/2, H/2);
+      ctx.lineTo(W/2 + Math.cos(a) * W * 0.44, H/2 + Math.sin(a) * H * 0.44);
+      ctx.stroke();
+    }
+    ctx.beginPath(); ctx.arc(W/2, H/2, Math.min(W, H) * 0.38, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(224,64,176,${0.06 + frac * 0.1})`; ctx.stroke();
+
+    arrows.forEach(a => {
+      if (Math.random() < 0.003 + frac * 0.01) {
+        a.targetAngle = a.angle + (Math.random() < 0.5 ? Math.PI / 2 : -Math.PI / 2);
+        a.pivoting = true;
+      }
+      if (a.pivoting) {
+        a.angle = lerp(a.angle, a.targetAngle, 0.12);
+        if (Math.abs(a.angle - a.targetAngle) < 0.05) { a.angle = a.targetAngle; a.pivoting = false; }
+      }
+      const sz = 7 + frac * 3;
+      ctx.save(); ctx.translate(a.x, a.y); ctx.rotate(a.angle);
+      ctx.beginPath();
+      ctx.moveTo(0, -sz); ctx.lineTo(sz * 0.6, sz * 0.5); ctx.lineTo(0, 0); ctx.lineTo(-sz * 0.6, sz * 0.5);
+      ctx.closePath();
+      ctx.fillStyle = `rgba(224,64,176,${0.22 + frac * 0.58})`; ctx.fill();
+      ctx.restore();
+    });
+
+    const bPad = 18, bY = H - 18, bH = 5;
+    ctx.fillStyle = 'rgba(255,255,255,0.09)';
+    ctx.fillRect(bPad, bY, W - bPad * 2, bH);
+    if (score > 0) {
+      const bg = ctx.createLinearGradient(bPad, 0, bPad + (W - bPad * 2) * score / 100, 0);
+      bg.addColorStop(0, '#900870'); bg.addColorStop(1, '#e040b0');
+      ctx.fillStyle = bg;
+      ctx.fillRect(bPad, bY, (W - bPad * 2) * score / 100, bH);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  let at = 0;
+  setInterval(() => { at += 0.025; target = (Math.sin(at * 0.9) * 0.5 + 0.5) * 65 + 10; }, 50);
+  window.addEventListener('resize', resize);
+  resize(); frame();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   CASCADE CARD VIZ
+═══════════════════════════════════════════════════════════ */
+(function cascadeCard() {
+  const canvas = document.getElementById('canvas-ca');
+  const ctx    = canvas.getContext('2d');
+  let W, H, t = 0, score = 0, target = 0;
+  let streams = [];
+
+  function resize() {
+    fitCanvas(canvas); W = canvas.width; H = canvas.height;
+    streams = Array.from({ length: 12 }, (_, i) => ({
+      x: (i / 11) * W * 0.78 + W * 0.11, phase: rand(0, Math.PI * 2),
+    }));
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#120804'); bg.addColorStop(1, '#060c14');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+    t += 0.018;
+    score = lerp(score, target, 0.038);
+    const frac = score / 100;
+
+    const vPad = 18, vTop = H * 0.08, vBot = H * 0.88;
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(vPad, vTop); ctx.lineTo(vPad, vBot);
+    ctx.lineTo(W - vPad, vBot); ctx.lineTo(W - vPad, vTop);
+    ctx.stroke();
+
+    const waterY = lerp(vBot, vTop + (vBot - vTop) * 0.05, frac);
+    const waterH  = vBot - waterY;
+    if (waterH > 1) {
+      ctx.beginPath();
+      ctx.moveTo(vPad, waterY + Math.sin(t * 1.5) * 3 * frac);
+      for (let x = vPad; x <= W - vPad; x += 3) {
+        ctx.lineTo(x, waterY + Math.sin(x * 0.03 + t * 1.8) * (3 + frac * 7));
+      }
+      ctx.lineTo(W - vPad, vBot); ctx.lineTo(vPad, vBot); ctx.closePath();
+      const wFill = ctx.createLinearGradient(0, waterY, 0, vBot);
+      const rC = Math.round(lerp(30, 255, frac));
+      const gC = Math.round(lerp(100, 88, frac));
+      const bC = Math.round(lerp(200, 36, frac));
+      wFill.addColorStop(0, `rgba(${rC},${gC},${bC},0.7)`);
+      wFill.addColorStop(1, `rgba(${rC},${gC},${bC},0.45)`);
+      ctx.fillStyle = wFill; ctx.fill();
+    }
+
+    if (score > 5) {
+      streams.forEach(s => {
+        const x0 = s.x + Math.sin(t * 1.2 + s.phase) * 2;
+        const rC = Math.round(lerp(30, 255, frac));
+        const gC = Math.round(lerp(100, 88, frac));
+        const bC = Math.round(lerp(200, 36, frac));
+        const grad = ctx.createLinearGradient(0, vTop - 20, 0, waterY);
+        grad.addColorStop(0, `rgba(${rC},${gC},${bC},0)`);
+        grad.addColorStop(1, `rgba(${rC},${gC},${bC},${0.3 * frac})`);
+        ctx.beginPath();
+        ctx.moveTo(x0 - 1.5, vTop - 20); ctx.lineTo(x0 + 1.5, vTop - 20);
+        ctx.lineTo(x0 + 2, waterY); ctx.lineTo(x0 - 2, waterY);
+        ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
+      });
+    }
+
+    if (frac > 0.88) {
+      ctx.fillStyle = `rgba(255,100,36,${(frac - 0.88) / 0.12 * 0.4})`;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    const bPad = 18, bY = H - 18, bH = 5;
+    ctx.fillStyle = 'rgba(255,255,255,0.09)';
+    ctx.fillRect(bPad, bY, W - bPad * 2, bH);
+    if (score > 0) {
+      const sb = ctx.createLinearGradient(bPad, 0, bPad + (W - bPad * 2) * score / 100, 0);
+      sb.addColorStop(0, '#902010'); sb.addColorStop(1, '#ff5824');
+      ctx.fillStyle = sb;
+      ctx.fillRect(bPad, bY, (W - bPad * 2) * score / 100, bH);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  let at = 0;
+  setInterval(() => {
+    at += 0.02;
+    // Accumulate faster (0.8) than decay (-2.2) to model irreversible escalation behaviour
+    target = clamp(target + (Math.sin(at * 0.5) > 0 ? 0.8 : -2.2), 0, 96);
+  }, 50);
+  window.addEventListener('resize', resize);
+  resize(); frame();
 })();
 
 /* ════════════════════════════════════════════════════════════

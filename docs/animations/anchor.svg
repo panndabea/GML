@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="160" height="192">
+  <rect width="200" height="240" fill="#060c14" rx="14"/>
+
+  <!-- label -->
+  <text x="100" y="22" fill="#80e8c0" font-family="system-ui,sans-serif" font-size="10" font-weight="700"
+        letter-spacing="2" text-anchor="middle">ANCHOR</text>
+  <text x="100" y="218" fill="#4a6a88" font-family="system-ui,sans-serif" font-size="9"
+        text-anchor="middle">Hold completely still · ≥ 3 seconds</text>
+
+  <!-- growing crystal rings -->
+  <g>
+    <polygon points="100,55 110,72 105,88 95,88 90,72" fill="none" stroke="#30d090" stroke-width="1" opacity="0">
+      <animate attributeName="opacity" values="0;0;0.35;0.5;0.35;0" keyTimes="0;0.3;0.45;0.6;0.75;1" dur="3.5s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="scale"
+        values="0.6 100 125; 1.2 100 125" additive="sum" dur="3.5s" repeatCount="indefinite"/>
+    </polygon>
+    <!-- outer hex ring 1 -->
+    <polygon points="100,52 118,63 118,87 100,98 82,87 82,63" fill="none" stroke="#30d090" stroke-width="1.2" opacity="0">
+      <animate attributeName="opacity" values="0;0;0.25;0.45;0.25;0" keyTimes="0;0.25;0.4;0.6;0.75;1" dur="3.5s" repeatCount="indefinite"/>
+    </polygon>
+    <!-- outer hex ring 2 -->
+    <polygon points="100,40 126,55 126,95 100,110 74,95 74,55" fill="none" stroke="#30d090" stroke-width="1" opacity="0">
+      <animate attributeName="opacity" values="0;0;0.15;0.3;0.15;0" keyTimes="0;0.2;0.4;0.6;0.8;1" dur="3.5s" repeatCount="indefinite"/>
+    </polygon>
+  </g>
+
+  <!-- phone body (perfectly still) -->
+  <rect x="70" y="75" width="60" height="100" rx="9" fill="#1e2a3a" stroke="#30d090" stroke-width="1.5"/>
+  <!-- screen -->
+  <rect x="75" y="83" width="50" height="80" rx="5" fill="#0a1628"/>
+  <!-- crystal glow on screen -->
+  <rect x="75" y="83" width="50" height="80" rx="5" fill="rgba(48,208,144,0.1)">
+    <animate attributeName="fill"
+      values="rgba(48,208,144,0.05);rgba(48,208,144,0.18);rgba(48,208,144,0.05)"
+      keyTimes="0;0.5;1" dur="3.5s" repeatCount="indefinite"/>
+  </rect>
+  <!-- crystal icon on screen -->
+  <polygon points="100,103 108,113 104,125 96,125 92,113" fill="none" stroke="#30d090" stroke-width="1.2" opacity="0.6">
+    <animate attributeName="opacity" values="0.3;0.8;0.3" dur="3.5s" repeatCount="indefinite"/>
+  </polygon>
+  <!-- speaker -->
+  <rect x="88" y="79" width="24" height="3" rx="1.5" fill="#1a4a38"/>
+  <!-- home button -->
+  <circle cx="100" cy="173" r="5" fill="none" stroke="#1a4a38" stroke-width="1.5"/>
+
+  <!-- stillness indicator -->
+  <text x="100" y="200" fill="#30d090" font-family="system-ui,sans-serif" font-size="9"
+        text-anchor="middle" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.7;0.7;0" keyTimes="0;0.4;0.5;0.7;0.8" dur="3.5s" repeatCount="indefinite"/>
+    RESOLVED
+  </text>
+</svg>

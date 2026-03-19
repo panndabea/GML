@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="160" height="192">
+  <rect width="200" height="240" fill="#060c14" rx="14"/>
+
+  <!-- label -->
+  <text x="100" y="22" fill="#f080d8" font-family="system-ui,sans-serif" font-size="10" font-weight="700"
+        letter-spacing="2" text-anchor="middle">PIVOT</text>
+  <text x="100" y="218" fill="#4a6a88" font-family="system-ui,sans-serif" font-size="9"
+        text-anchor="middle">Snap 90° and hold · then back</text>
+
+  <!-- compass rose -->
+  <line x1="100" y1="82" x2="100" y2="170" stroke="rgba(224,64,176,0.1)" stroke-width="1"/>
+  <line x1="56" y1="126" x2="144" y2="126" stroke="rgba(224,64,176,0.1)" stroke-width="1"/>
+  <circle cx="100" cy="126" r="40" fill="none" stroke="rgba(224,64,176,0.12)" stroke-width="1" stroke-dasharray="3 3"/>
+
+  <!-- phone group (top-down view): snap 90° -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate"
+      values="0 100 126; 0 100 126; 90 100 126; 90 100 126; 90 100 126; 0 100 126; 0 100 126"
+      keyTimes="0; 0.1; 0.25; 0.45; 0.65; 0.8; 1"
+      dur="3s" repeatCount="indefinite" calcMode="spline"
+      keySplines="0 0 1 1; 0 0 0.1 1; 0 0 1 1; 0 0 1 1; 0 0 0.1 1; 0 0 1 1"/>
+    <!-- phone top-down (portrait shape) -->
+    <rect x="74" y="98" width="52" height="56" rx="7" fill="#1e2a3a" stroke="#e040b0" stroke-width="1.5"/>
+    <!-- screen top-down -->
+    <rect x="78" y="102" width="44" height="48" rx="4" fill="#0a1628"/>
+    <rect x="78" y="102" width="44" height="48" rx="4" fill="rgba(224,64,176,0.1)">
+      <animate attributeName="fill"
+        values="rgba(224,64,176,0.05);rgba(224,64,176,0.05);rgba(224,64,176,0.25);rgba(224,64,176,0.15);rgba(224,64,176,0.05);rgba(224,64,176,0.05)"
+        keyTimes="0;0.1;0.25;0.45;0.65;1" dur="3s" repeatCount="indefinite"/>
+    </rect>
+    <!-- arrow on screen -->
+    <path d="M90,126 L110,126 M104,120 L110,126 L104,132" fill="none" stroke="#e040b0" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" opacity="0.8">
+      <animate attributeName="opacity" values="0.8;0.8;0.3;0.8;0.8;0.8" keyTimes="0;0.1;0.25;0.35;0.65;1" dur="3s" repeatCount="indefinite"/>
+    </path>
+    <!-- top camera dot -->
+    <circle cx="100" cy="100" r="2" fill="#e040b0" opacity="0.5"/>
+  </g>
+</svg>
