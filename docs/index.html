@@ -193,6 +193,8 @@
     .meter-fill.gs { background: linear-gradient(90deg,#1e6aa8,#3d9be9); }
     .meter-fill.tr { background: linear-gradient(90deg,#a03018,#e07040); }
     .meter-fill.or { background: linear-gradient(90deg,#5020a0,#9060e8); }
+    .meter-fill.su { background: linear-gradient(90deg,#a08018,#e8c030); }
+    .meter-fill.pi { background: linear-gradient(90deg,#901060,#e040b0); }
     .demo-status {
       padding: 0.85rem 1rem; border-radius: 0.5rem;
       background: rgba(255,255,255,0.04);
@@ -449,12 +451,30 @@
           <div class="meter-track"><div class="meter-fill or" id="bar-or"></div></div>
         </div>
 
+        <div class="gesture-meter">
+          <div class="meter-head">
+            <span class="meter-label" style="color:#f0d878">SURGE</span>
+            <span class="meter-value" id="val-su">0</span>
+          </div>
+          <div class="meter-track"><div class="meter-fill su" id="bar-su"></div></div>
+        </div>
+
+        <div class="gesture-meter">
+          <div class="meter-head">
+            <span class="meter-label" style="color:#f080d8">PIVOT</span>
+            <span class="meter-value" id="val-pi">0</span>
+          </div>
+          <div class="meter-track"><div class="meter-fill pi" id="bar-pi"></div></div>
+        </div>
+
         <div class="demo-instr" id="demo-instr">
           <h4>Desktop Controls</h4>
           <ul>
             <li><strong>GROUNDSWELL</strong>: Click &amp; drag upward on the canvas</li>
             <li><strong>TREMOR</strong>: Rapidly shake the mouse left–right</li>
             <li><strong>ORBIT</strong>: Move the mouse in circles on the canvas</li>
+            <li><strong>SURGE</strong>: Double-click on the canvas</li>
+            <li><strong>PIVOT</strong>: Shift + drag left or right on the canvas</li>
           </ul>
         </div>
 
@@ -1319,6 +1339,99 @@ class OrbitDetector {
   }
 }
 
+class SurgeDetector {
+  constructor() {
+    this.score    = 0;
+    this._window  = [];
+    this._cooldown = 0;
+  }
+  update(pitchDeg, ts) {
+    if (ts < this._cooldown) {
+      this.score = Math.max(0, this.score - 0.8);
+      return this.score;
+    }
+    this._window.push({ v: pitchDeg, t: ts });
+    this._window = this._window.filter(e => ts - e.t < 500);
+    if (this._window.length >= 3) {
+      const oldest = this._window[0];
+      const delta  = pitchDeg - oldest.v;
+      const dt     = ts - oldest.t;
+      if (delta < -20 && dt < 500) {
+        const vel = Math.abs(delta) / Math.max(dt / 1000, 0.05);
+        if (vel >= 80) {
+          const surge = clamp((vel - 80) / 120 * 60 + 40, 40, 100);
+          this.score   = clamp(this.score + surge * 0.6, 0, 100);
+          this._cooldown = ts + 2000;
+          this._window = [];
+        }
+      }
+    }
+    this.score = Math.max(0, this.score - 0.8);
+    return this.score;
+  }
+  trigger(ts) {
+    if (ts < this._cooldown) return this.score;
+    this.score     = clamp(this.score + 80, 0, 100);
+    this._cooldown = ts + 2000;
+    return this.score;
+  }
+}
+
+class PivotDetector {
+  constructor() {
+    this.score     = 0;
+    this.direction = 'none';
+    this._startYaw = null;
+    this._startTs  = null;
+    this._phase    = 'idle';
+    this._holdTs   = null;
+  }
+  update(yawDeg, ts) {
+    if (this._startYaw === null) { this._startYaw = yawDeg; this._startTs = ts; return { score: 0, dir: 'none' }; }
+    let delta = yawDeg - this._startYaw;
+    if (delta >  180) delta -= 360;
+    if (delta < -180) delta += 360;
+    const elapsed = ts - this._startTs;
+    if (this._phase === 'idle') {
+      if (Math.abs(delta) >= 75 && elapsed < 1200) {
+        this._phase    = 'holding';
+        this.direction = delta > 0 ? 'cw' : 'ccw';
+        this._holdTs   = ts;
+      } else if (elapsed > 2000) {
+        this._startYaw = yawDeg;
+        this._startTs  = ts;
+      }
+    } else if (this._phase === 'holding') {
+      const holdDur = ts - this._holdTs;
+      if (holdDur >= 500) {
+        this.score = clamp(this.score + 3, 0, 100);
+      }
+      if (Math.abs(delta) > 150 || holdDur > 6000) {
+        this._phase    = 'idle';
+        this._startYaw = yawDeg;
+        this._startTs  = ts;
+      }
+    }
+    if (this._phase === 'idle') {
+      this.score = Math.max(0, this.score - 0.4);
+    }
+    return { score: this.score, dir: this.direction };
+  }
+  triggerTwist(dir, ts) {
+    this.direction = dir;
+    this._phase    = 'holding';
+    this._holdTs   = ts;
+    this._startTs  = ts;
+    this.score     = clamp(this.score + 50, 0, 100);
+    return { score: this.score, dir: this.direction };
+  }
+  reset() {
+    this._startYaw = null;
+    this._startTs  = null;
+    this._phase    = 'idle';
+  }
+}
+
 /* ════════════════════════════════════════════════════════════
    DEMO CANVAS VISUALISER
 ═══════════════════════════════════════════════════════════ */
@@ -1326,7 +1439,7 @@ function createDemoViz() {
   const canvas = document.getElementById('demo-canvas');
   const ctx    = canvas.getContext('2d');
   let W, H, t = 0;
-  const scores = { gs: 0, tr: 0, or: 0 };
+  const scores = { gs: 0, tr: 0, or: 0, su: 0, pi: 0 };
 
   function resize() {
     fitCanvas(canvas);
@@ -1342,6 +1455,8 @@ function createDemoViz() {
     const gs = scores.gs / 100;
     const tr = scores.tr / 100;
     const or = scores.or / 100;
+    const su = scores.su / 100;
+    const pi = scores.pi / 100;
 
     // GROUNDSWELL — waves
     if (gs > 0.01) {
@@ -1389,13 +1504,60 @@ function createDemoViz() {
       ctx.fillStyle = glw; ctx.fillRect(0, 0, W, H);
     }
 
+    // SURGE — radial starburst
+    if (su > 0.01) {
+      const rays = Math.floor(su * 14) + 6;
+      for (let i = 0; i < rays; i++) {
+        const angle = (i / rays) * Math.PI * 2 + t * 0.15;
+        const len   = (22 + su * 58) * (0.7 + 0.3 * Math.sin(t * 6 + i));
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(angle) * len, cy + Math.sin(angle) * len);
+        ctx.strokeStyle = `hsla(${lerp(55, 40, i / rays)},90%,${lerp(55, 80, su)}%,${su * 0.75})`;
+        ctx.lineWidth = 1.5 + su * 2;
+        ctx.stroke();
+      }
+      const glw2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, 20 + su * 50);
+      glw2.addColorStop(0, `rgba(255,220,40,${su * 0.55})`);
+      glw2.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = glw2; ctx.fillRect(0, 0, W, H);
+    }
+
+    // PIVOT — rotating compass arrow (twist indicator)
+    if (pi > 0.01) {
+      const snapAngle = t * (pi * 1.8 + 0.2);
+      const arrowLen  = 28 + pi * 36;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(snapAngle);
+      ctx.beginPath();
+      ctx.moveTo(0, -arrowLen);
+      ctx.lineTo(arrowLen * 0.28, -arrowLen * 0.45);
+      ctx.lineTo(arrowLen * 0.1, -arrowLen * 0.45);
+      ctx.lineTo(arrowLen * 0.1, arrowLen * 0.55);
+      ctx.lineTo(-arrowLen * 0.1, arrowLen * 0.55);
+      ctx.lineTo(-arrowLen * 0.1, -arrowLen * 0.45);
+      ctx.lineTo(-arrowLen * 0.28, -arrowLen * 0.45);
+      ctx.closePath();
+      ctx.fillStyle = `hsla(310,75%,${lerp(45, 72, pi)}%,${pi * 0.82})`;
+      ctx.fill();
+      ctx.restore();
+      // outer arc showing twist direction
+      const arcR = arrowLen * 1.55;
+      ctx.beginPath();
+      ctx.arc(cx, cy, arcR, -Math.PI / 2, -Math.PI / 2 + Math.PI * 1.5 * pi);
+      ctx.strokeStyle = `hsla(310,80%,65%,${pi * 0.55})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
     // active label
     const best = Object.entries(scores).sort((a, b) => b[1] - a[1])[0];
     if (best[1] > 8) {
       ctx.fillStyle = 'rgba(255,255,255,0.45)';
       ctx.font = `${clamp(W * 0.042, 11, 17)}px monospace`;
       ctx.textAlign = 'center';
-      ctx.fillText({ gs: 'GROUNDSWELL', tr: 'TREMOR', or: 'ORBIT' }[best[0]], cx, 26);
+      ctx.fillText({ gs: 'GROUNDSWELL', tr: 'TREMOR', or: 'ORBIT', su: 'SURGE', pi: 'PIVOT' }[best[0]], cx, 26);
     }
 
     requestAnimationFrame(frame);
@@ -1417,17 +1579,24 @@ function initMotion(viz) {
   const gsDet = new GroundswellDetector();
   const trDet = new TremorDetector();
   const orDet = new OrbitDetector();
+  const suDet = new SurgeDetector();
+  const piDet = new PivotDetector();
 
-  function updateUI(gs, tr, or_) {
+  function updateUI(gs, tr, or_, su_, pi_) {
     const clampScore = v => clamp(Math.round(v), 0, 100);
     const gsS = clampScore(gs), trS = clampScore(tr), orS = clampScore(or_);
+    const suS = clampScore(su_), piS = clampScore(pi_);
     document.getElementById('val-gs').textContent = gsS;
     document.getElementById('val-tr').textContent = trS;
     document.getElementById('val-or').textContent = orS;
+    document.getElementById('val-su').textContent = suS;
+    document.getElementById('val-pi').textContent = piS;
     document.getElementById('bar-gs').style.width = gsS + '%';
     document.getElementById('bar-tr').style.width = trS + '%';
     document.getElementById('bar-or').style.width = orS + '%';
-    viz.set({ gs: gsS, tr: trS, or: orS });
+    document.getElementById('bar-su').style.width = suS + '%';
+    document.getElementById('bar-pi').style.width = piS + '%';
+    viz.set({ gs: gsS, tr: trS, or: orS, su: suS, pi: piS });
   }
 
   const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
@@ -1441,6 +1610,8 @@ function initMotion(viz) {
         <li><strong>GROUNDSWELL</strong>: Tilt phone forward (top edge down) and hold ≥ 1.5 s</li>
         <li><strong>TREMOR</strong>: Rapidly shake phone left and right</li>
         <li><strong>ORBIT</strong>: Hold phone flat and rotate it in a circle</li>
+        <li><strong>SURGE</strong>: Snap the phone quickly upward (top edge up)</li>
+        <li><strong>PIVOT</strong>: Hold phone flat and snap it 90° clockwise or counter-clockwise</li>
       </ul>`;
 
     permBtn.addEventListener('click', async () => {
@@ -1467,17 +1638,22 @@ function initMotion(viz) {
     statusEl.classList.add('on');
     let beta = 0, gamma = 0, alpha = 0;
     window.addEventListener('deviceorientation', e => {
+      const now = Date.now();
       beta  = e.beta  || 0;
       gamma = e.gamma || 0;
       alpha = e.alpha || 0;
       const gs = gsDet.update(beta);
-      const { score: or } = orDet.update(alpha, Date.now());
-      updateUI(gs, trDet.score, or);
+      const { score: or } = orDet.update(alpha, now);
+      const { score: pi } = piDet.update(alpha, now);
+      // Surge: detect rapid backward pitch (beta decreasing fast)
+      const su = suDet.update(beta, now);
+      updateUI(gs, trDet.score, or, su, pi);
     });
     window.addEventListener('devicemotion', e => {
       if (e.rotationRate) {
-        const tr = trDet.update(e.rotationRate.gamma || 0, Date.now());
-        updateUI(gsDet.score, tr, orDet.score);
+        const now = Date.now();
+        const tr = trDet.update(e.rotationRate.gamma || 0, now);
+        updateUI(gsDet.score, tr, orDet.score, suDet.score, piDet.score);
       }
     });
   }
@@ -1486,37 +1662,46 @@ function initMotion(viz) {
     const canvas = document.getElementById('demo-canvas');
     let pressed = false, lastX = 0, lastY = 0;
     let pitch = 0, history = [];
-    let simYaw = 0;
+    let simYaw = 0, simPivotYaw = 0;
 
     canvas.style.cursor = 'crosshair';
-    canvas.addEventListener('mousedown', e => { pressed = true; lastX = e.clientX; lastY = e.clientY; });
-    canvas.addEventListener('mouseup',   () => { pressed = false; });
-    canvas.addEventListener('mouseleave',() => { pressed = false; });
+    canvas.addEventListener('mousedown', e => {
+      pressed = true; lastX = e.clientX; lastY = e.clientY;
+    });
+    canvas.addEventListener('mouseup',    () => { pressed = false; });
+    canvas.addEventListener('mouseleave', () => { pressed = false; });
+
+    // SURGE: double-click triggers a surge burst
+    canvas.addEventListener('dblclick', () => {
+      suDet.trigger(Date.now());
+    });
 
     canvas.addEventListener('mousemove', e => {
       const dx = e.clientX - lastX;
       const dy = e.clientY - lastY;
       const now = Date.now();
 
-      // GROUNDSWELL: drag upward
-      if (pressed) {
+      // GROUNDSWELL: click & drag upward (no Shift)
+      if (pressed && !e.shiftKey) {
         pitch = clamp(pitch - dy * 0.5, 0, 65);
       } else {
         pitch = Math.max(0, pitch - 1.2);
       }
 
-      // TREMOR: rapid horizontal movement
-      history.push({ x: e.clientX, t: now });
-      history = history.filter(p => now - p.t < 800);
-      if (history.length > 3) {
-        const totalMov = history.slice(-6).reduce((s, p, i, a) =>
-          s + (i > 0 ? Math.abs(p.x - a[i - 1].x) : 0), 0);
-        if (totalMov > 30) trDet.update(dx * 8, now);
-        else trDet.update(0, now);
+      // TREMOR: rapid horizontal movement (no Shift)
+      if (!e.shiftKey) {
+        history.push({ x: e.clientX, t: now });
+        history = history.filter(p => now - p.t < 800);
+        if (history.length > 3) {
+          const totalMov = history.slice(-6).reduce((s, p, i, a) =>
+            s + (i > 0 ? Math.abs(p.x - a[i - 1].x) : 0), 0);
+          if (totalMov > 30) trDet.update(dx * 8, now);
+          else trDet.update(0, now);
+        }
       }
 
-      // ORBIT: circular mouse motion
-      if (history.length >= 5) {
+      // ORBIT: circular mouse motion (no Shift)
+      if (!e.shiftKey && history.length >= 5) {
         const recent = history.slice(-8);
         const mcx = recent.reduce((s, p) => s + p.x, 0) / recent.length;
         const mcy = e.clientY; // approximate
@@ -1531,7 +1716,19 @@ function initMotion(viz) {
         }
       }
 
+      // PIVOT: Shift + drag left/right simulates a 90° twist
+      if (e.shiftKey && pressed) {
+        simPivotYaw += dx * 0.8;
+        piDet.update(simPivotYaw, now);
+      }
+
       lastX = e.clientX; lastY = e.clientY;
+    });
+
+    // Reset pivot sim yaw on release to allow repeated gestures
+    canvas.addEventListener('mouseup', () => {
+      simPivotYaw = 0;
+      piDet.reset();
     });
 
     // touch support (basic)
@@ -1549,7 +1746,7 @@ function initMotion(viz) {
     });
 
     function tick() {
-      updateUI(gsDet.update(pitch), trDet.score, orDet.score);
+      updateUI(gsDet.update(pitch), trDet.score, orDet.score, suDet.score, piDet.score);
       setTimeout(tick, 50);
     }
     tick();
