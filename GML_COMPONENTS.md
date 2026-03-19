@@ -1,6 +1,6 @@
 # GML Component Proposals
 
-Gyro Motion Language (GML) — structured proposals for eight motion primitives that translate continuous gyroscope data into meaningful shared digital experiences.
+Gyro Motion Language (GML) — structured proposals for twelve motion primitives that translate continuous gyroscope data into meaningful shared digital experiences.
 
 ---
 
@@ -516,3 +516,234 @@ The main display shows a rising-water animation: the collective cascade level fi
 
 ### 10. Design Insight
 There is a meaningful difference between a room that feels strongly and a room that is feeling more strongly with every passing moment. Existing tools capture the first; Cascade is designed to capture the second. The rate of change of collective feeling is often more actionable than its absolute level: a room at moderate intensity with a steep upward slope is more urgent than a room at high intensity that has stabilized. Cascade gives facilitators a first derivative of group emotional state — a signal that is invisible to every conventional engagement tool but that experienced facilitators learn to feel intuitively in the room. GML makes that intuition measurable.
+
+---
+
+## Component 9: LEAN
+
+### 1. Name
+**LEAN**
+
+### 2. Motion Description
+A sustained tilt of the device to the left — the left edge drops while the right edge rises, as if the phone is leaning sideways in thought.
+
+| Attribute | Detail |
+|-----------|--------|
+| Direction | Left roll (device tilts so left edge moves down) |
+| Intensity | Moderate — past a 15° threshold |
+| Duration | Held for ≥ 1.5 seconds; brief tips do not count |
+| Rhythm | Continuous hold, not oscillating; a deliberate sideways lean |
+
+### 3. Detection Logic
+- Monitor the roll (gamma) axis of the device orientation continuously.
+- Detect when the left-roll angle exceeds **15°** and is held for **≥ 1.5 seconds**.
+- Weight the signal by hold duration: longer holds produce a stronger contribution score.
+- Discard noise below a 5° dead-zone to prevent false triggers from casual device handling.
+- Track release: once the device returns to neutral, the contribution decays over 2 seconds.
+
+### 4. Semantic Meaning
+**Scepticism. Lateral consideration. Weighing options.**
+A Lean signals measured doubt or active consideration of an alternative. It is not a rejection — it is the posture of a mind not yet committed, tilting toward uncertainty or a second option.
+
+### 5. Mapping Logic
+- Each user's left-roll angle and duration contribute a **scepticism score** (0–100).
+- The score drives a shared "consideration bar" on the main screen.
+- High collective lean indicates the room is not yet convinced — a signal to pause, explore alternatives, or address concerns.
+
+### 6. Individual vs Collective Effect
+
+**Single user:**
+A bubble drifts leftward on the device screen, tracking with the roll angle.
+
+**1,000 users simultaneously:**
+The display fills with particles drifting left in unison, creating a visible tide of measured hesitation — a signal that consensus is soft.
+
+### 7. Experience Use Case
+**"Is this the right path?"** — During a strategy session, the facilitator proposes a direction. Attendees who are weighing alternatives lean their devices left. A high LEAN score signals unresolved doubt before a vote is even called.
+
+### 8. Visualization Idea
+A level-bubble indicator tilts left as score increases. Background particles drift gently leftward at low intensity; at high intensity the flow accelerates and the level-line tilts sharply, making collective doubt visually unmistakable.
+
+### 9. Variations
+
+| Variable | Effect |
+|----------|--------|
+| **Depth** | A 30°+ lean signals strong scepticism; a 15°–20° lean signals mild consideration |
+| **Duration** | Holds beyond 5 seconds indicate sustained unresolved doubt requiring facilitator attention |
+| **Synchronization** | If >60% of users lean left simultaneously, a "room hesitation" event fires |
+
+### 10. Design Insight
+Most tools only capture positive signals. LEAN captures the quality of non-commitment — the cognitive state between agreement and disagreement that conventional voting forces people to resolve prematurely.
+
+---
+
+## Component 10: BANK
+
+### 1. Name
+**BANK**
+
+### 2. Motion Description
+A sustained tilt of the device to the right — the right edge drops while the left edge rises, like a confident sideways commitment.
+
+| Attribute | Detail |
+|-----------|--------|
+| Direction | Right roll (device tilts so right edge moves down) |
+| Intensity | Moderate — past a 15° threshold |
+| Duration | Held for ≥ 1.5 seconds |
+| Rhythm | Continuous hold; a deliberate rightward lean |
+
+### 3. Detection Logic
+- Monitor the roll (gamma) axis of the device orientation continuously.
+- Detect when the right-roll angle exceeds **15°** and is held for **≥ 1.5 seconds**.
+- Weight the signal by hold duration.
+- Discard noise below a 5° dead-zone.
+- Decay over 2 seconds on release.
+
+### 4. Semantic Meaning
+**Confidence. Commitment. Decisive lean.**
+A Bank signals confident alignment — the physical posture of a person leaning toward a decision with assurance. An aviation metaphor: banking into a turn means committing to a direction.
+
+### 5. Mapping Logic
+- Each user's right-roll angle and duration contribute a **commitment score** (0–100).
+- The score drives a shared "confidence bar" on the main screen.
+- Paired with LEAN, BANK gives facilitators a left/right tension reading — how divided the room is between doubt and commitment.
+
+### 6. Individual vs Collective Effect
+
+**Single user:**
+A bubble drifts rightward on the device screen, tracking the roll angle.
+
+**1,000 users simultaneously:**
+Particles flow rightward in unison, giving the room a visual sense of shared decisive momentum. When BANK and LEAN scores are close, a "divided room" indicator fires.
+
+### 7. Experience Use Case
+**"Are you ready to commit?"** — After deliberation, the facilitator asks participants to bank right if they are ready to proceed. A high BANK score confirms collective readiness without requiring a formal vote.
+
+### 8. Visualization Idea
+A level-bubble indicator tilts right as score increases. Golden amber particles flow right with increasing speed at high intensity, evoking the decisive banking motion of an aircraft committed to a turn.
+
+### 9. Variations
+
+| Variable | Effect |
+|----------|--------|
+| **Depth** | A 30°+ bank signals strong commitment |
+| **Duration** | Holds beyond 5 seconds indicate deep, sustained confidence |
+| **Synchronization** | If >60% of users bank right simultaneously, a "collective commitment" event fires |
+
+### 10. Design Insight
+LEAN and BANK together form a commitment continuum — the first analogue left/right signal in audience engagement. Together they reveal not just where the room stands, but how much internal tension exists between doubt and confidence.
+
+---
+
+## Component 11: VEER
+
+### 1. Name
+**VEER**
+
+### 2. Motion Description
+A sustained counterclockwise (leftward) rotation of the device around its vertical axis — a deliberate twist to the left held in place.
+
+| Attribute | Detail |
+|-----------|--------|
+| Direction | Yaw left (counterclockwise when viewed from above) |
+| Intensity | 40–60° from neutral orientation |
+| Duration | Held for ≥ 1.5 seconds |
+| Rhythm | A snap to position then hold; not a continuous spin |
+
+### 3. Detection Logic
+- Monitor the yaw (alpha) axis continuously.
+- Detect when the leftward yaw displacement reaches **40°** from the neutral position and is held for **≥ 1.5 seconds**.
+- Distinguish from ORBIT (which is a full circular rotation) by requiring a hold rather than continued motion.
+- Distinguish from PIVOT (which snaps to 90°) by the shallower angle and different semantic intent.
+- Decay the score over 2 seconds on return to neutral.
+
+### 4. Semantic Meaning
+**Redirection. Dissent. Counterpoint.**
+A Veer is the gesture of a mind turning away from the current path — not a full reversal, but a significant deviation. Collective veering signals that the room wants to go somewhere different from where it is being led.
+
+### 5. Mapping Logic
+- Each user's left-yaw angle and duration contribute a **dissent score** (0–100).
+- The score drives a shared "redirection indicator" on the main screen.
+- High collective VEER is a strong signal to the facilitator that the current direction is being resisted.
+
+### 6. Individual vs Collective Effect
+
+**Single user:**
+A counterclockwise arc sweeps on the device screen, showing the twist direction.
+
+**1,000 users simultaneously:**
+The display fills with CCW-rotating elements converging into a unified counterclockwise vortex — a visually unmistakable signal of collective redirection.
+
+### 7. Experience Use Case
+**"Wrong direction"** — During a live debate, participants who want the discussion redirected twist their devices left. The VEER score rises in real time, giving the moderator an analogue signal of how many people want a course change.
+
+### 8. Visualization Idea
+Counterclockwise rotating spokes and a sweeping arc indicator. At low scores: faint rotating lines. At high scores: a bright violet vortex, clearly showing the collective counterclockwise pull.
+
+### 9. Variations
+
+| Variable | Effect |
+|----------|--------|
+| **Angle** | 60°+ signals strong dissent; 40°–50° signals mild preference for redirection |
+| **Duration** | Holds beyond 4 seconds indicate persistent, unresolved redirection demand |
+| **Synchronization** | If >55% of users veer left simultaneously, a "redirect demand" event fires |
+
+### 10. Design Insight
+VEER gives voice to the crowd's desire to change direction without requiring anyone to speak up. It is the spatial equivalent of raising a hand — but analog, continuous, and collective.
+
+---
+
+## Component 12: SWEEP
+
+### 1. Name
+**SWEEP**
+
+### 2. Motion Description
+A sustained clockwise (rightward) rotation of the device around its vertical axis — a deliberate twist to the right held in place.
+
+| Attribute | Detail |
+|-----------|--------|
+| Direction | Yaw right (clockwise when viewed from above) |
+| Intensity | 40–60° from neutral orientation |
+| Duration | Held for ≥ 1.5 seconds |
+| Rhythm | A snap to position then hold; not a continuous spin |
+
+### 3. Detection Logic
+- Monitor the yaw (alpha) axis continuously.
+- Detect when the rightward yaw displacement reaches **40°** from the neutral position and is held for **≥ 1.5 seconds**.
+- Distinguish from ORBIT and PIVOT by angle threshold and hold-vs-spin pattern.
+- Decay the score over 2 seconds on return to neutral.
+
+### 4. Semantic Meaning
+**Clearance. Decisive action. Moving forward.**
+A Sweep is the gesture of brushing something aside and moving on — a confident rightward rotation that signals readiness to advance, clear the decks, and proceed decisively.
+
+### 5. Mapping Logic
+- Each user's right-yaw angle and duration contribute a **clearance score** (0–100).
+- The score drives a shared "advance indicator" on the main screen.
+- Paired with VEER, SWEEP gives facilitators a real-time read of how many people want to move forward versus redirect.
+
+### 6. Individual vs Collective Effect
+
+**Single user:**
+A clockwise arc sweeps on the device screen, showing the twist direction.
+
+**1,000 users simultaneously:**
+The display fills with CW-rotating elements converging into a unified clockwise vortex — the visual opposite of VEER, signalling collective readiness to advance.
+
+### 7. Experience Use Case
+**"Let's move on"** — After a prolonged discussion, participants who are ready to proceed twist their devices right. A high SWEEP score gives the facilitator confidence to close the topic and advance the agenda.
+
+### 8. Visualization Idea
+Clockwise rotating spokes and a sweeping arc indicator. At low scores: faint rotating lines. At high scores: a bright lime-green vortex, evoking the decisive sweep of clearing a table and moving forward.
+
+### 9. Variations
+
+| Variable | Effect |
+|----------|--------|
+| **Angle** | 60°+ signals strong readiness to proceed |
+| **Duration** | Holds beyond 4 seconds indicate clear, persistent desire to advance |
+| **Synchronization** | If >55% of users sweep right simultaneously, a "clear to proceed" event fires |
+
+### 10. Design Insight
+SWEEP and VEER together form a directional tension pair — the room's real-time vote on whether to advance or redirect, captured continuously and without binary choice. Together they give facilitators the first analog left/right twist signal in audience engagement.

@@ -4,7 +4,7 @@
 
 ## Motion Primitives
 
-Eight distinct gestures turn every smartphone into an expressive instrument. The animations below show exactly how each movement should be performed.
+Twelve distinct gestures turn every smartphone into an expressive instrument. The animations below show exactly how each movement should be performed.
 
 <table>
 <tr>
@@ -59,11 +59,37 @@ Eight distinct gestures turn every smartphone into an expressive instrument. The
   <sub><i>Escalation · Building pressure</i></sub>
 </td>
 </tr>
+<tr>
+<td align="center" width="200">
+  <img src="docs/animations/lean.svg" alt="LEAN animation" width="160"/><br/>
+  <strong>LEAN</strong><br/>
+  <sub>Tilt left edge down · hold ≥ 1.5 s</sub><br/>
+  <sub><i>Scepticism · Weighing options</i></sub>
+</td>
+<td align="center" width="200">
+  <img src="docs/animations/bank.svg" alt="BANK animation" width="160"/><br/>
+  <strong>BANK</strong><br/>
+  <sub>Tilt right edge down · hold ≥ 1.5 s</sub><br/>
+  <sub><i>Confidence · Commitment</i></sub>
+</td>
+<td align="center" width="200">
+  <img src="docs/animations/veer.svg" alt="VEER animation" width="160"/><br/>
+  <strong>VEER</strong><br/>
+  <sub>Twist phone left · hold ≥ 1.5 s</sub><br/>
+  <sub><i>Redirection · Dissent</i></sub>
+</td>
+<td align="center" width="200">
+  <img src="docs/animations/sweep.svg" alt="SWEEP animation" width="160"/><br/>
+  <strong>SWEEP</strong><br/>
+  <sub>Twist phone right · hold ≥ 1.5 s</sub><br/>
+  <sub><i>Clearance · Decisive action</i></sub>
+</td>
+</tr>
 </table>
 
 ## Full Component Reference
 
-See [GML_COMPONENTS.md](./GML_COMPONENTS.md) for the complete structured specification of all eight motion primitives including detection logic, semantic meaning, and visualization ideas.
+See [GML_COMPONENTS.md](./GML_COMPONENTS.md) for the complete structured specification of all twelve motion primitives including detection logic, semantic meaning, and visualization ideas.
 
 | Component | Axis | Threshold | Meaning |
 |-----------|------|-----------|---------|
@@ -75,3 +101,7 @@ See [GML_COMPONENTS.md](./GML_COMPONENTS.md) for the complete structured specifi
 | **PULSE** | Pitch oscillation | 8–20° · 0.5–1.5 Hz | Agreement, affirmation, active support |
 | **PIVOT** | Yaw snap | 80–100° · hold 1.5 s | Reframing, course correction, change of mind |
 | **CASCADE** | Pitch deepening | +25° over 3–10 s | Escalation, urgency, building pressure |
+| **LEAN** | Roll left | 15° · hold ≥ 1.5 s | Scepticism, weighing options, lateral consideration |
+| **BANK** | Roll right | 15° · hold ≥ 1.5 s | Confidence, commitment, decisive lean |
+| **VEER** | Yaw left | 40–60° · hold ≥ 1.5 s | Redirection, dissent, counterpoint |
+| **SWEEP** | Yaw right | 40–60° · hold ≥ 1.5 s | Clearance, decisive action, moving forward |

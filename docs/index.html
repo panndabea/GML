@@ -24,6 +24,10 @@
       --pu-color:    #38b0d8;
       --pi-color:    #e040b0;
       --ca-color:    #ff5824;
+      --le-color:    #40d8c8;
+      --ba-color:    #d8a830;
+      --ve-color:    #a070e8;
+      --sw-color:    #60d840;
     }
 
     html { scroll-behavior: smooth; }
@@ -131,6 +135,10 @@
     .card.pu:hover { border-color: rgba(56,176,216,0.5); }
     .card.pi:hover { border-color: rgba(224,64,176,0.5); }
     .card.ca:hover { border-color: rgba(255,88,36,0.5); }
+    .card.le:hover { border-color: rgba(64,216,200,0.5); }
+    .card.ba:hover { border-color: rgba(216,168,48,0.5); }
+    .card.ve:hover { border-color: rgba(160,112,232,0.5); }
+    .card.sw:hover { border-color: rgba(96,216,64,0.5); }
     .card-canvas-wrap { height: 210px; }
     .card-canvas { width: 100%; height: 100%; display: block; }
     .card-body { padding: 1.4rem; }
@@ -147,6 +155,10 @@
     .pu .card-tag { background: rgba(56,176,216,0.2); color: #88d8f8; }
     .pi .card-tag { background: rgba(224,64,176,0.2); color: #f080d8; }
     .ca .card-tag { background: rgba(255,88,36,0.2); color: #ff9868; }
+    .le .card-tag { background: rgba(64,216,200,0.2); color: #80f0e8; }
+    .ba .card-tag { background: rgba(216,168,48,0.2); color: #f0d070; }
+    .ve .card-tag { background: rgba(160,112,232,0.2); color: #c898f8; }
+    .sw .card-tag { background: rgba(96,216,64,0.2); color: #90f060; }
     .card-body h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.45rem; }
     .card-body p { color: var(--muted); font-size: 0.88rem; line-height: 1.65; }
     .card-meta {
@@ -266,7 +278,7 @@
 <!-- ── COMPONENTS ───────────────────────────────────────────── -->
 <section class="section" id="components">
   <div class="section-label">Motion Primitives</div>
-  <h2 class="section-title">Eight Languages of Motion</h2>
+  <h2 class="section-title">Twelve Languages of Motion</h2>
   <p class="section-desc">Each component captures a distinct physical gesture and maps it to collective meaning — turning a room full of devices into a single expressive instrument.</p>
 
   <div class="cards">
@@ -403,6 +415,74 @@
           <span>📈 ≥ 25° deepening</span>
           <span>⏱ 3 – 10 s ramp</span>
           <span>💡 Escalation</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEAN -->
+    <div class="card le">
+      <div class="card-canvas-wrap">
+        <canvas class="card-canvas" id="canvas-le"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">LEAN</div>
+        <h3>Sustained Left Tilt</h3>
+        <p>Tilt your device to the left and hold. A collective lean signals measured scepticism or the weight of an alternative option pulling the room sideways — not a rejection, but a pause.</p>
+        <div class="card-meta">
+          <span>📐 15° threshold</span>
+          <span>⏱ 1.5 s hold</span>
+          <span>💡 Scepticism</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BANK -->
+    <div class="card ba">
+      <div class="card-canvas-wrap">
+        <canvas class="card-canvas" id="canvas-ba"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">BANK</div>
+        <h3>Sustained Right Tilt</h3>
+        <p>Tilt your device to the right and hold. A collective bank signals confident commitment — the room tilting decisively toward an idea, like an aircraft banking into a turn it intends to complete.</p>
+        <div class="card-meta">
+          <span>📐 15° threshold</span>
+          <span>⏱ 1.5 s hold</span>
+          <span>💡 Commitment</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- VEER -->
+    <div class="card ve">
+      <div class="card-canvas-wrap">
+        <canvas class="card-canvas" id="canvas-ve"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">VEER</div>
+        <h3>Sustained Left Twist</h3>
+        <p>Rotate your device counterclockwise and hold. A collective veer marks deliberate redirection — the room signalling dissent or demanding a course change before momentum carries things too far.</p>
+        <div class="card-meta">
+          <span>🔄 40 – 60° CCW</span>
+          <span>⏱ 1.5 s hold</span>
+          <span>💡 Redirection</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SWEEP -->
+    <div class="card sw">
+      <div class="card-canvas-wrap">
+        <canvas class="card-canvas" id="canvas-sw"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">SWEEP</div>
+        <h3>Sustained Right Twist</h3>
+        <p>Rotate your device clockwise and hold. A collective sweep signals decisive clearance — the room turning right together as a unified act of moving forward, brushing aside doubt or hesitation.</p>
+        <div class="card-meta">
+          <span>🔄 40 – 60° CW</span>
+          <span>⏱ 1.5 s hold</span>
+          <span>💡 Clearance</span>
         </div>
       </div>
     </div>
@@ -1237,6 +1317,288 @@ function fitCanvas(canvas) {
     // Accumulate faster (0.8) than decay (-2.2) to model irreversible escalation behaviour
     target = clamp(target + (Math.sin(at * 0.5) > 0 ? 0.8 : -2.2), 0, 96);
   }, 50);
+  window.addEventListener('resize', resize);
+  resize(); frame();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   LEAN CARD VIZ
+═══════════════════════════════════════════════════════════ */
+(function leanCard() {
+  const canvas = document.getElementById('canvas-le');
+  const ctx    = canvas.getContext('2d');
+  let W, H, t = 0, score = 0, target = 0;
+  let bubbles = [];
+
+  function resize() {
+    fitCanvas(canvas); W = canvas.width; H = canvas.height;
+    bubbles = Array.from({ length: 22 }, () => ({
+      x: rand(0, W), y: rand(H * 0.2, H * 0.85),
+      r: rand(3, 7), vy: rand(-0.3, 0.3), vx: rand(-0.5, -0.1),
+      hue: Math.round(rand(170, 195)),
+      a: rand(0.3, 0.7),
+    }));
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    const g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, '#031814'); g.addColorStop(1, '#051a20');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    t += 0.018;
+    score = lerp(score, target, 0.04);
+    const frac = score / 100;
+
+    // level horizon line tilting left
+    const tilt = frac * 22;
+    ctx.save();
+    ctx.translate(W / 2, H / 2);
+    ctx.rotate(-tilt * Math.PI / 180);
+    ctx.strokeStyle = `rgba(64,216,200,${0.12 + frac * 0.28})`; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(-W, 0); ctx.lineTo(W, 0); ctx.stroke();
+    // bubble level indicator
+    const bubbleX = -frac * W * 0.28;
+    ctx.beginPath(); ctx.arc(bubbleX, 0, 7 + frac * 4, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(64,216,200,${0.5 + frac * 0.4})`; ctx.lineWidth = 2; ctx.stroke();
+    ctx.restore();
+
+    // drifting particles moving left
+    bubbles.forEach(p => {
+      p.x += p.vx * (0.4 + frac * 1.8);
+      p.y += p.vy;
+      if (p.x < -10) { p.x = W + 10; p.y = rand(H * 0.2, H * 0.85); }
+      if (p.y > H + 4) p.y = 0;
+      if (p.y < -4)  p.y = H;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${p.hue},72%,65%,${p.a * (0.2 + frac * 0.75)})`;
+      ctx.fill();
+    });
+
+    const bPad = 18, bY = H - 18, bH = 5;
+    ctx.fillStyle = 'rgba(255,255,255,0.09)';
+    ctx.fillRect(bPad, bY, W - bPad * 2, bH);
+    if (score > 0) {
+      const bg = ctx.createLinearGradient(bPad, 0, bPad + (W - bPad * 2) * score / 100, 0);
+      bg.addColorStop(0, '#1a8878'); bg.addColorStop(1, '#40d8c8');
+      ctx.fillStyle = bg;
+      ctx.fillRect(bPad, bY, (W - bPad * 2) * score / 100, bH);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  let at = 0;
+  setInterval(() => { at += 0.018; target = (Math.sin(at * 0.7) * 0.5 + 0.5) * 62 + 8; }, 50);
+  window.addEventListener('resize', resize);
+  resize(); frame();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   BANK CARD VIZ
+═══════════════════════════════════════════════════════════ */
+(function bankCard() {
+  const canvas = document.getElementById('canvas-ba');
+  const ctx    = canvas.getContext('2d');
+  let W, H, t = 0, score = 0, target = 0;
+  let bubbles = [];
+
+  function resize() {
+    fitCanvas(canvas); W = canvas.width; H = canvas.height;
+    bubbles = Array.from({ length: 22 }, () => ({
+      x: rand(0, W), y: rand(H * 0.2, H * 0.85),
+      r: rand(3, 7), vy: rand(-0.3, 0.3), vx: rand(0.1, 0.5),
+      hue: Math.round(rand(35, 50)),
+      a: rand(0.3, 0.7),
+    }));
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    const g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, '#180e02'); g.addColorStop(1, '#201408');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    t += 0.018;
+    score = lerp(score, target, 0.04);
+    const frac = score / 100;
+
+    // level horizon line tilting right
+    const tilt = frac * 22;
+    ctx.save();
+    ctx.translate(W / 2, H / 2);
+    ctx.rotate(tilt * Math.PI / 180);
+    ctx.strokeStyle = `rgba(216,168,48,${0.12 + frac * 0.28})`; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(-W, 0); ctx.lineTo(W, 0); ctx.stroke();
+    const bubbleX = frac * W * 0.28;
+    ctx.beginPath(); ctx.arc(bubbleX, 0, 7 + frac * 4, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(216,168,48,${0.5 + frac * 0.4})`; ctx.lineWidth = 2; ctx.stroke();
+    ctx.restore();
+
+    // drifting particles moving right
+    bubbles.forEach(p => {
+      p.x += p.vx * (0.4 + frac * 1.8);
+      p.y += p.vy;
+      if (p.x > W + 10) { p.x = -10; p.y = rand(H * 0.2, H * 0.85); }
+      if (p.y > H + 4) p.y = 0;
+      if (p.y < -4)  p.y = H;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${p.hue},75%,62%,${p.a * (0.2 + frac * 0.75)})`;
+      ctx.fill();
+    });
+
+    const bPad = 18, bY = H - 18, bH = 5;
+    ctx.fillStyle = 'rgba(255,255,255,0.09)';
+    ctx.fillRect(bPad, bY, W - bPad * 2, bH);
+    if (score > 0) {
+      const bg = ctx.createLinearGradient(bPad, 0, bPad + (W - bPad * 2) * score / 100, 0);
+      bg.addColorStop(0, '#886010'); bg.addColorStop(1, '#d8a830');
+      ctx.fillStyle = bg;
+      ctx.fillRect(bPad, bY, (W - bPad * 2) * score / 100, bH);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  let at = 0;
+  setInterval(() => { at += 0.018; target = (Math.sin(at * 0.65) * 0.5 + 0.5) * 64 + 8; }, 50);
+  window.addEventListener('resize', resize);
+  resize(); frame();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   VEER CARD VIZ
+═══════════════════════════════════════════════════════════ */
+(function veerCard() {
+  const canvas = document.getElementById('canvas-ve');
+  const ctx    = canvas.getContext('2d');
+  let W, H, t = 0, score = 0, target = 0;
+  let arcs = [];
+
+  function resize() { fitCanvas(canvas); W = canvas.width; H = canvas.height; }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    const g = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.7);
+    g.addColorStop(0, '#100820'); g.addColorStop(1, '#060c14');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    t += 0.016;
+    score = lerp(score, target, 0.04);
+    const frac = score / 100;
+    const cx = W / 2, cy = H / 2;
+
+    // CCW rotating spokes
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2 - t * (0.35 + frac * 0.65);
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(a) * (28 + frac * 45), cy + Math.sin(a) * (28 + frac * 45));
+      ctx.strokeStyle = `hsla(270,70%,65%,${0.08 + frac * 0.28})`;
+      ctx.lineWidth = 1.5 + frac; ctx.stroke();
+    }
+
+    // outer rotating ring
+    ctx.beginPath();
+    ctx.arc(cx, cy, 44 + frac * 18, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(160,112,232,${0.1 + frac * 0.35})`;
+    ctx.lineWidth = 1.5; ctx.stroke();
+
+    // CCW arc sweep indicator
+    if (frac > 0.08) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, 30, -Math.PI / 2, -Math.PI / 2 - Math.PI * frac * 1.4, true);
+      ctx.strokeStyle = `rgba(160,112,232,${frac * 0.75})`;
+      ctx.lineWidth = 2.5 + frac * 2; ctx.stroke();
+    }
+
+    // central glow
+    const radG = ctx.createRadialGradient(cx, cy, 0, cx, cy, 18 + frac * 22);
+    radG.addColorStop(0, `rgba(168,96,240,${frac * 0.55})`);
+    radG.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = radG; ctx.fillRect(0, 0, W, H);
+
+    const bPad = 18, bY = H - 18, bH = 5;
+    ctx.fillStyle = 'rgba(255,255,255,0.09)';
+    ctx.fillRect(bPad, bY, W - bPad * 2, bH);
+    if (score > 0) {
+      const bg = ctx.createLinearGradient(bPad, 0, bPad + (W - bPad * 2) * score / 100, 0);
+      bg.addColorStop(0, '#4820a0'); bg.addColorStop(1, '#a070e8');
+      ctx.fillStyle = bg;
+      ctx.fillRect(bPad, bY, (W - bPad * 2) * score / 100, bH);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  let at = 0;
+  setInterval(() => { at += 0.022; target = (Math.sin(at * 0.75) * 0.5 + 0.5) * 66 + 8; }, 50);
+  window.addEventListener('resize', resize);
+  resize(); frame();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   SWEEP CARD VIZ
+═══════════════════════════════════════════════════════════ */
+(function sweepCard() {
+  const canvas = document.getElementById('canvas-sw');
+  const ctx    = canvas.getContext('2d');
+  let W, H, t = 0, score = 0, target = 0;
+
+  function resize() { fitCanvas(canvas); W = canvas.width; H = canvas.height; }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    const g = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.7);
+    g.addColorStop(0, '#061408'); g.addColorStop(1, '#060c14');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    t += 0.016;
+    score = lerp(score, target, 0.04);
+    const frac = score / 100;
+    const cx = W / 2, cy = H / 2;
+
+    // CW rotating spokes
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2 + t * (0.35 + frac * 0.65);
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(a) * (28 + frac * 45), cy + Math.sin(a) * (28 + frac * 45));
+      ctx.strokeStyle = `hsla(110,72%,58%,${0.08 + frac * 0.28})`;
+      ctx.lineWidth = 1.5 + frac; ctx.stroke();
+    }
+
+    // outer rotating ring
+    ctx.beginPath();
+    ctx.arc(cx, cy, 44 + frac * 18, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(96,216,64,${0.1 + frac * 0.35})`;
+    ctx.lineWidth = 1.5; ctx.stroke();
+
+    // CW arc sweep indicator
+    if (frac > 0.08) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, 30, -Math.PI / 2, -Math.PI / 2 + Math.PI * frac * 1.4, false);
+      ctx.strokeStyle = `rgba(96,216,64,${frac * 0.75})`;
+      ctx.lineWidth = 2.5 + frac * 2; ctx.stroke();
+    }
+
+    // central glow
+    const radG = ctx.createRadialGradient(cx, cy, 0, cx, cy, 18 + frac * 22);
+    radG.addColorStop(0, `rgba(80,216,48,${frac * 0.55})`);
+    radG.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = radG; ctx.fillRect(0, 0, W, H);
+
+    const bPad = 18, bY = H - 18, bH = 5;
+    ctx.fillStyle = 'rgba(255,255,255,0.09)';
+    ctx.fillRect(bPad, bY, W - bPad * 2, bH);
+    if (score > 0) {
+      const bg = ctx.createLinearGradient(bPad, 0, bPad + (W - bPad * 2) * score / 100, 0);
+      bg.addColorStop(0, '#288018'); bg.addColorStop(1, '#60d840');
+      ctx.fillStyle = bg;
+      ctx.fillRect(bPad, bY, (W - bPad * 2) * score / 100, bH);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  let at = 0;
+  setInterval(() => { at += 0.022; target = (Math.sin(at * 0.72) * 0.5 + 0.5) * 66 + 8; }, 50);
   window.addEventListener('resize', resize);
   resize(); frame();
 })();

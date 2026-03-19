@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="160" height="192">
+  <rect width="200" height="240" fill="#060c14" rx="14"/>
+
+  <!-- label -->
+  <text x="100" y="22" fill="#40d8c8" font-family="system-ui,sans-serif" font-size="10" font-weight="700"
+        letter-spacing="2" text-anchor="middle">LEAN</text>
+  <text x="100" y="218" fill="#4a6a88" font-family="system-ui,sans-serif" font-size="9"
+        text-anchor="middle">Tilt left edge down · hold ≥ 1.5 s</text>
+
+  <!-- phone group, pivot at centre-bottom, tilt left (roll axis) -->
+  <g id="phone-lean">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0 100 175; 20 100 175; 20 100 175; 20 100 175; 0 100 175; 0 100 175"
+      keyTimes="0; 0.25; 0.45; 0.55; 0.75; 1"
+      dur="2.8s" repeatCount="indefinite" calcMode="spline"
+      keySplines="0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1"/>
+    <!-- phone body -->
+    <rect x="70" y="75" width="60" height="100" rx="9" fill="#1e2a3a" stroke="#40d8c8" stroke-width="1.5"/>
+    <!-- screen -->
+    <rect x="75" y="83" width="50" height="80" rx="5" fill="#0a1628"/>
+    <!-- screen glow -->
+    <rect x="75" y="83" width="50" height="80" rx="5" fill="rgba(64,216,200,0.12)">
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="1.4s" repeatCount="indefinite"/>
+    </rect>
+    <!-- left-tilt indicator on screen: horizontal level line tilted -->
+    <line x1="82" y1="123" x2="118" y2="127" stroke="#40d8c8" stroke-width="1.5" opacity="0.5"/>
+    <circle cx="85" cy="124" r="4" fill="none" stroke="#40d8c8" stroke-width="1.5" opacity="0.7">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="1.4s" repeatCount="indefinite"/>
+    </circle>
+    <!-- speaker -->
+    <rect x="88" y="79" width="24" height="3" rx="1.5" fill="#1a3a38"/>
+    <!-- home button -->
+    <circle cx="100" cy="173" r="5" fill="none" stroke="#1a3a38" stroke-width="1.5"/>
+  </g>
+
+  <!-- left direction arrow -->
+  <g opacity="0.75">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0 100 175; 20 100 175; 20 100 175; 20 100 175; 0 100 175; 0 100 175"
+      keyTimes="0; 0.25; 0.45; 0.55; 0.75; 1"
+      dur="2.8s" repeatCount="indefinite" calcMode="spline"
+      keySplines="0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1"/>
+    <path d="M53,126 L42,126 M47,120 L41,126 L47,132" fill="none" stroke="#40d8c8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.2;0.3;0.6;0.7;1" dur="2.8s" repeatCount="indefinite"/>
+    </path>
+  </g>
+</svg>
