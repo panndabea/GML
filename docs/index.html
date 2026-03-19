@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GML — Gyro Motion Language</title>
+  <meta name="description" content="A framework that translates continuous gyroscope data into meaningful shared digital experiences at scale." />
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #060c14;
+      --bg2:         #0a1628;
+      --text:        #e8f0f8;
+      --muted:       #7a8fa8;
+      --border:      rgba(255,255,255,0.08);
+      --blue:        #3d9be9;
+      --gs-color:    #3d9be9;
+      --tr-color:    #e07040;
+      --or-color:    #9060e8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.9rem 2rem;
+      background: rgba(6,12,20,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-size: 1.1rem; font-weight: 800; letter-spacing: 0.18em;
+      color: var(--blue); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 1.75rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.88rem;
+      letter-spacing: 0.04em; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 7rem 2rem 4rem;
+      position: relative; overflow: hidden;
+    }
+    #hero-canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35;
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 780px; }
+    .hero-badge {
+      display: inline-block; padding: 0.3rem 1rem;
+      border: 1px solid var(--blue); border-radius: 2rem;
+      color: var(--blue); font-size: 0.75rem; letter-spacing: 0.18em;
+      text-transform: uppercase; margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 800;
+      letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 1.5rem;
+      background: linear-gradient(130deg, #ffffff 0%, #90c8ff 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.2rem); color: var(--muted);
+      max-width: 580px; margin: 0 auto 2.5rem;
+    }
+    .cta-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.75rem; border-radius: 0.5rem;
+      font-size: 0.9rem; font-weight: 600; text-decoration: none;
+      transition: all 0.2s; cursor: pointer; border: none;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: #5ab0ff; transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* ===== SECTIONS ===== */
+    .section {
+      padding: 5rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--blue); margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 700;
+      margin-bottom: 0.8rem;
+    }
+    .section-desc { color: var(--muted); max-width: 580px; margin-bottom: 3rem; }
+
+    /* ===== COMPONENT CARDS ===== */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px,1fr)); gap: 1.5rem; }
+    .card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 1rem; overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s;
+    }
+    .card:hover { transform: translateY(-4px); }
+    .card.gs:hover { border-color: rgba(61,155,233,0.5); }
+    .card.tr:hover { border-color: rgba(224,112,64,0.5); }
+    .card.or:hover { border-color: rgba(144,96,232,0.5); }
+    .card-canvas-wrap { height: 210px; }
+    .card-canvas { width: 100%; height: 100%; display: block; }
+    .card-body { padding: 1.4rem; }
+    .card-tag {
+      display: inline-block; padding: 0.18rem 0.55rem; border-radius: 0.25rem;
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 0.7rem;
+    }
+    .gs .card-tag { background: rgba(61,155,233,0.2); color: #7ac4f8; }
+    .tr .card-tag { background: rgba(224,112,64,0.2); color: #f0a878; }
+    .or .card-tag { background: rgba(144,96,232,0.2); color: #c0a0f8; }
+    .card-body h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.45rem; }
+    .card-body p { color: var(--muted); font-size: 0.88rem; line-height: 1.65; }
+    .card-meta {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      margin-top: 0.9rem; padding-top: 0.9rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem; color: var(--muted);
+    }
+
+    /* ===== DEMO SECTION ===== */
+    #demo {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    #demo .inner { max-width: 1200px; margin: 0 auto; padding: 5rem 2rem; }
+    .demo-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 3rem; align-items: start;
+    }
+    @media (max-width: 720px) { .demo-grid { grid-template-columns: 1fr; } }
+    .demo-canvas-wrap {
+      border-radius: 1rem; overflow: hidden;
+      border: 1px solid var(--border); aspect-ratio: 1;
+      position: relative;
+    }
+    #demo-canvas { width: 100%; height: 100%; display: block; }
+    .demo-panel h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem; }
+    .gesture-meter { margin-bottom: 1.25rem; }
+    .meter-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 0.4rem;
+    }
+    .meter-label { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.05em; }
+    .meter-value { font-size: 0.82rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .meter-track {
+      height: 7px; background: rgba(255,255,255,0.08);
+      border-radius: 4px; overflow: hidden;
+    }
+    .meter-fill {
+      height: 100%; border-radius: 4px;
+      transition: width 0.12s; width: 0%;
+    }
+    .meter-fill.gs { background: linear-gradient(90deg,#1e6aa8,#3d9be9); }
+    .meter-fill.tr { background: linear-gradient(90deg,#a03018,#e07040); }
+    .meter-fill.or { background: linear-gradient(90deg,#5020a0,#9060e8); }
+    .demo-status {
+      padding: 0.85rem 1rem; border-radius: 0.5rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      font-size: 0.82rem; color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+    .demo-status.on { border-color: #30d090; color: #30d090; }
+    .demo-instr { font-size: 0.83rem; color: var(--muted); line-height: 1.7; }
+    .demo-instr h4 { color: var(--text); margin-bottom: 0.45rem; font-size: 0.88rem; }
+    .demo-instr ul { list-style: none; padding: 0; }
+    .demo-instr li { padding-left: 1.1rem; position: relative; padding-bottom: 0.2rem; }
+    .demo-instr li::before { content: '›'; position: absolute; left: 0; color: var(--blue); }
+    #perm-btn {
+      display: none; margin-top: 1rem; width: 100%;
+      justify-content: center;
+    }
+
+    /* ===== ABOUT ===== */
+    .about-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr));
+      gap: 1.5rem; margin-top: 2rem;
+    }
+    .about-card {
+      padding: 1.4rem; background: var(--bg2);
+      border-radius: 0.75rem; border: 1px solid var(--border);
+    }
+    .about-card .icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+    .about-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .about-card p { color: var(--muted); font-size: 0.86rem; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      padding: 2.5rem 2rem; text-align: center;
+      border-top: 1px solid var(--border);
+      color: var(--muted); font-size: 0.82rem;
+    }
+    footer a { color: var(--blue); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────── -->
+<nav>
+  <a href="#" class="nav-logo">GML</a>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#components">Components</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="https://github.com/panndabea/GML" target="_blank" rel="noopener">GitHub</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────────── -->
+<div class="hero" id="overview">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge">Gyro Motion Language</div>
+    <h1>Motion as Meaning</h1>
+    <p>A framework that translates continuous gyroscope data — tilt, rotation, movement — into meaningful shared digital experiences at scale.</p>
+    <div class="cta-group">
+      <a href="#demo" class="btn btn-primary">Try the Demo</a>
+      <a href="#components" class="btn btn-outline">Explore Components</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── COMPONENTS ───────────────────────────────────────────── -->
+<section class="section" id="components">
+  <div class="section-label">Motion Primitives</div>
+  <h2 class="section-title">Three Languages of Motion</h2>
+  <p class="section-desc">Each component captures a distinct physical gesture and maps it to collective meaning — turning a room full of devices into a single expressive instrument.</p>
+
+  <div class="cards">
+
+    <!-- GROUNDSWELL -->
+    <div class="card gs">
+      <div class="card-canvas-wrap">
+        <canvas class="card-canvas" id="canvas-gs"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">GROUNDSWELL</div>
+        <h3>Sustained Forward Tilt</h3>
+        <p>Lean your device forward like committing to a decision. Held conviction becomes collective momentum — a tide of shared intent visible across the room.</p>
+        <div class="card-meta">
+          <span>📐 15° threshold</span>
+          <span>⏱ 1.5 s hold</span>
+          <span>💡 Conviction</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TREMOR -->
+    <div class="card tr">
+      <div class="card-canvas-wrap">
+        <canvas class="card-canvas" id="canvas-tr"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">TREMOR</div>
+        <h3>Rapid Lateral Oscillation</h3>
+        <p>Micro-oscillations reveal tension without intention. When a room tremors together it signals what surveys cannot — the unfiltered emotional temperature of a crowd.</p>
+        <div class="card-meta">
+          <span>〰 3 – 7 Hz</span>
+          <span>📊 5° amplitude</span>
+          <span>💡 Tension</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORBIT -->
+    <div class="card or">
+      <div class="card-canvas-wrap">
+        <canvas class="card-canvas" id="canvas-or"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">ORBIT</div>
+        <h3>Slow Circular Rotation</h3>
+        <p>Rotate your device like a conductor gathering threads. When the room orbits together individual synthesis becomes collective convergence — a phase lock of shared intent.</p>
+        <div class="card-meta">
+          <span>🔄 3 – 6 s/rev</span>
+          <span>📐 270° arc</span>
+          <span>💡 Alignment</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── DEMO ──────────────────────────────────────────────────── -->
+<div id="demo">
+  <div class="inner">
+    <div class="section-label">Interactive Experience</div>
+    <h2 class="section-title">Live Motion Demo</h2>
+    <p class="section-desc" style="margin-bottom:2.5rem">Experience GML in action. On mobile, tilt and rotate your device. On desktop, use your mouse to simulate gestures on the canvas.</p>
+
+    <div class="demo-grid">
+      <div class="demo-canvas-wrap">
+        <canvas id="demo-canvas"></canvas>
+      </div>
+
+      <div class="demo-panel">
+        <div id="demo-status" class="demo-status">⬤ Initializing…</div>
+
+        <h3>Gesture Detection</h3>
+
+        <div class="gesture-meter">
+          <div class="meter-head">
+            <span class="meter-label" style="color:#7ac4f8">GROUNDSWELL</span>
+            <span class="meter-value" id="val-gs">0</span>
+          </div>
+          <div class="meter-track"><div class="meter-fill gs" id="bar-gs"></div></div>
+        </div>
+
+        <div class="gesture-meter">
+          <div class="meter-head">
+            <span class="meter-label" style="color:#f0a878">TREMOR</span>
+            <span class="meter-value" id="val-tr">0</span>
+          </div>
+          <div class="meter-track"><div class="meter-fill tr" id="bar-tr"></div></div>
+        </div>
+
+        <div class="gesture-meter">
+          <div class="meter-head">
+            <span class="meter-label" style="color:#c0a0f8">ORBIT</span>
+            <span class="meter-value" id="val-or">0</span>
+          </div>
+          <div class="meter-track"><div class="meter-fill or" id="bar-or"></div></div>
+        </div>
+
+        <div class="demo-instr" id="demo-instr">
+          <h4>Desktop Controls</h4>
+          <ul>
+            <li><strong>GROUNDSWELL</strong>: Click &amp; drag upward on the canvas</li>
+            <li><strong>TREMOR</strong>: Rapidly shake the mouse left–right</li>
+            <li><strong>ORBIT</strong>: Move the mouse in circles on the canvas</li>
+          </ul>
+        </div>
+
+        <button id="perm-btn" class="btn btn-primary">Enable Motion Sensors</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ABOUT ─────────────────────────────────────────────────── -->
+<section class="section" id="about">
+  <div class="section-label">About GML</div>
+  <h2 class="section-title">Motion Beyond Voting</h2>
+  <p class="section-desc">Most audience engagement tools ask people to click buttons. GML asks them to move — capturing continuous, analog, involuntary signals richer than any binary choice.</p>
+
+  <div class="about-grid">
+    <div class="about-card">
+      <div class="icon">📐</div>
+      <h3>Analog, Not Binary</h3>
+      <p>Voting captures position. Groundswell captures conviction. A 30° lean held for 8 seconds means something different to a 16° lean for 2 seconds.</p>
+    </div>
+    <div class="about-card">
+      <div class="icon">🫀</div>
+      <h3>Involuntary Signals</h3>
+      <p>Tremor captures affective state in the moment — the body's response to tension, not a post-hoc rating of how tense you felt.</p>
+    </div>
+    <div class="about-card">
+      <div class="icon">🌀</div>
+      <h3>Collective Intelligence</h3>
+      <p>When 1 000 devices orbit in the same direction simultaneously, something real is happening. Phase lock is a signal no survey could capture.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────────────── -->
+<footer>
+  <p>GML — Gyro Motion Language &nbsp;·&nbsp; <a href="https://github.com/panndabea/GML" target="_blank" rel="noopener">View on GitHub</a></p>
+  <p style="margin-top:0.4rem;opacity:0.45">Built with the Web DeviceOrientation API</p>
+</footer>
+
+<!-- ─────────────────────────── SCRIPTS ─────────────────────── -->
+<script>
+'use strict';
+
+/* ── helpers ─────────────────────────────────────────────── */
+const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+const lerp  = (a, b, t)   => a + (b - a) * t;
+const rand  = (lo, hi)    => lo + Math.random() * (hi - lo);
+
+/* ── canvas resize utility ───────────────────────────────── */
+function fitCanvas(canvas) {
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width  = Math.round(rect.width);
+  canvas.height = Math.round(rect.height);
+}
+
+/* ════════════════════════════════════════════════════════════
+   HERO BACKGROUND
+═══════════════════════════════════════════════════════════ */
+(function heroBackground() {
+  const canvas = document.getElementById('hero-canvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H, t = 0;
+  let stars = [];
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+    stars = Array.from({ length: 110 }, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * 1.3 + 0.2,
+      spd: Math.random() * 0.25 + 0.05,
+      a: Math.random() * 0.5 + 0.25,
+    }));
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    t += 0.012;
+
+    stars.forEach(s => {
+      s.x -= s.spd;
+      if (s.x < 0) { s.x = W; s.y = Math.random() * H; }
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200,220,255,${s.a})`;
+      ctx.fill();
+    });
+
+    for (let i = 0; i < 3; i++) {
+      const yBase = H * (0.3 + i * 0.22);
+      const amp   = 28 + i * 14;
+      const freq  = 0.003 + i * 0.0018;
+      const spd   = 0.25 + i * 0.15;
+      ctx.beginPath();
+      ctx.moveTo(0, yBase);
+      for (let x = 0; x <= W; x += 5) {
+        const dy = Math.sin(x * freq + t * spd) * amp
+                 + Math.cos(x * freq * 1.9 + t * spd * 0.6) * (amp * 0.4);
+        ctx.lineTo(x, yBase + dy);
+      }
+      ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+      ctx.fillStyle = `rgba(40,130,220,${0.045 - i * 0.01})`;
+      ctx.fill();
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  frame();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   GROUNDSWELL CARD VIZ
+═══════════════════════════════════════════════════════════ */
+(function groundswellCard() {
+  const canvas = document.getElementById('canvas-gs');
+  const ctx    = canvas.getContext('2d');
+  let W, H, t = 0, score = 0, target = 0;
+  const particles = [];
+
+  function resize() {
+    fitCanvas(canvas);
+    W = canvas.width; H = canvas.height;
+    particles.length = 0;
+    for (let i = 0; i < 38; i++) {
+      particles.push({
+        x: rand(0, W), y: rand(H * 0.35, H * 0.95),
+        vx: rand(-0.25, 0.25), vy: rand(-0.15, 0.15),
+        r: rand(2, 5.5),
+        hue: Math.round(rand(190, 215)),
+        a: rand(0.25, 0.75),
+      });
+    }
+  }
+
+  function wave(yBase, amp, freq, spd, color) {
+    ctx.beginPath();
+    ctx.moveTo(0, yBase);
+    for (let x = 0; x <= W; x += 3) {
+      ctx.lineTo(x, yBase + Math.sin(x * freq + t * spd) * amp * (1 + score / 120));
+    }
+    ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#03101d'); g.addColorStop(1, '#081a2e');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    t += 0.018 + score * 0.0004;
+    score = lerp(score, target, 0.04);
+
+    wave(H * 0.76, 10, 0.022, 1.3, 'rgba(18,75,140,0.5)');
+    wave(H * 0.65, 16, 0.016, 1.0, 'rgba(24,88,158,0.4)');
+    wave(H * 0.54, 22, 0.011, 0.75, `rgba(30,106,168,${0.28 + score * 0.003})`);
+
+    particles.forEach(p => {
+      p.x += p.vx + score * 0.035;
+      p.y += p.vy - score * 0.008;
+      if (p.x > W + 8)  { p.x = -8;          p.y = rand(H * 0.35, H * 0.95); }
+      if (p.y < -8)     { p.y = H * 0.9;     p.x = rand(0, W); }
+      if (p.y > H + 4)    p.y = H * 0.35;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${p.hue},70%,65%,${p.a * (0.25 + score / 100)})`;
+      ctx.fill();
+    });
+
+    // pressure bar
+    const bPad = 18, bY = H - 18, bH = 5;
+    ctx.fillStyle = 'rgba(255,255,255,0.09)';
+    ctx.fillRect(bPad, bY, W - bPad * 2, bH);
+    if (score > 0) {
+      const bg = ctx.createLinearGradient(bPad, 0, bPad + (W - bPad * 2) * score / 100, 0);
+      bg.addColorStop(0, '#1e6aa8'); bg.addColorStop(1, '#3d9be9');
+      ctx.fillStyle = bg;
+      ctx.fillRect(bPad, bY, (W - bPad * 2) * score / 100, bH);
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  // auto-animate
+  let at = 0;
+  setInterval(() => { at += 0.02; target = (Math.sin(at) * 0.5 + 0.5) * 65 + 8; }, 50);
+
+  window.addEventListener('resize', resize);
+  resize();
+  frame();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   TREMOR CARD VIZ
+═══════════════════════════════════════════════════════════ */
+(function tremorCard() {
+  const canvas = document.getElementById('canvas-tr');
+  const ctx    = canvas.getContext('2d');
+  let W, H, t = 0, score = 0, target = 0;
+  let rings = [];
+
+  function resize() {
+    fitCanvas(canvas);
+    W = canvas.width; H = canvas.height;
+  }
+
+  function spawnRing() {
+    rings.push({
+      x: W / 2 + rand(-W * 0.22, W * 0.22),
+      y: H / 2 + rand(-H * 0.22, H * 0.22),
+      r: rand(4, 18),
+      maxR: rand(55, 110) * (1 + score / 100),
+      life: 1, decay: rand(0.006, 0.016),
+    });
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    const g = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.75);
+    g.addColorStop(0, '#140c06'); g.addColorStop(1, '#060c14');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    t += 0.02;
+    score = lerp(score, target, 0.045);
+
+    // grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)'; ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 28) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 28) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    if (score > 4 && Math.random() < 0.04 + score * 0.005) spawnRing();
+
+    const frac = score / 100;
+    const rC = Math.round(lerp(80, 240, frac));
+    const gC = Math.round(lerp(130, 70, frac));
+    const bC = Math.round(lerp(210, 30, frac));
+
+    rings = rings.filter(r => r.life > 0);
+    rings.forEach(ring => {
+      ring.r += (ring.maxR - ring.r) * 0.05;
+      ring.life -= ring.decay;
+      ctx.beginPath();
+      ctx.arc(ring.x, ring.y, ring.r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(${rC},${gC},${bC},${ring.life * 0.55})`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
+
+    if (score > 18) {
+      const pulseR = 22 + Math.sin(t * (3 + score * 0.04)) * 10;
+      const radG = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, pulseR * 3.5);
+      radG.addColorStop(0, `rgba(${rC},${gC},${bC},${0.18 * frac})`);
+      radG.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = radG;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  let at = 0;
+  setInterval(() => { at += 0.028; target = (Math.sin(at * 1.4) * 0.5 + 0.5) * 55 + 5; }, 50);
+
+  window.addEventListener('resize', resize);
+  resize();
+  frame();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   ORBIT CARD VIZ
+═══════════════════════════════════════════════════════════ */
+(function orbitCard() {
+  const canvas = document.getElementById('canvas-or');
+  const ctx    = canvas.getContext('2d');
+  let W, H, t = 0, score = 0, target = 0;
+  let particles = [];
+
+  function resize() {
+    fitCanvas(canvas);
+    W = canvas.width; H = canvas.height;
+    particles = Array.from({ length: 28 }, (_, i) => ({
+      angle: (i / 28) * Math.PI * 2,
+      radius: rand(38, 78),
+      spd: rand(0.004, 0.009),
+      size: rand(2, 4.5),
+      trail: [],
+      hue: Math.round(rand(42, 58)),
+    }));
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    const cx = W / 2, cy = H / 2;
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.75);
+    g.addColorStop(0, '#10071e'); g.addColorStop(0.55, '#090514'); g.addColorStop(1, '#060c14');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    // stars (deterministic so no flicker)
+    ctx.fillStyle = 'rgba(200,220,255,0.55)';
+    for (let i = 0; i < 28; i++) {
+      ctx.fillRect(((i * 137.5 + 50) % W), ((i * 97.3 + 30) % H), 1, 1);
+    }
+
+    t += 0.011;
+    score = lerp(score, target, 0.045);
+    const frac = score / 100;
+
+    // attractor glow
+    const aGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 28 + score * 0.28);
+    aGlow.addColorStop(0, `rgba(180,155,255,${0.28 + frac * 0.35})`);
+    aGlow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = aGlow;
+    ctx.fillRect(cx - 55, cy - 55, 110, 110);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(210,190,255,${0.45 + frac * 0.45})`;
+    ctx.fill();
+
+    // guide ring
+    ctx.beginPath();
+    ctx.arc(cx, cy, 58, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(140,110,255,${0.06 + frac * 0.18})`;
+    ctx.lineWidth = 1; ctx.stroke();
+
+    // particles
+    particles.forEach(p => {
+      p.angle += p.spd * (0.5 + frac * 1.4);
+      const r  = clamp(p.radius * (1 - frac * 0.22), 28, 80);
+      const px = cx + Math.cos(p.angle) * r;
+      const py = cy + Math.sin(p.angle) * r * 0.45;
+      p.trail.push({ x: px, y: py });
+      if (p.trail.length > 9) p.trail.shift();
+      for (let i = 1; i < p.trail.length; i++) {
+        const tf = i / p.trail.length;
+        ctx.beginPath();
+        ctx.moveTo(p.trail[i-1].x, p.trail[i-1].y);
+        ctx.lineTo(p.trail[i].x,   p.trail[i].y);
+        ctx.strokeStyle = `hsla(${p.hue},88%,65%,${tf * 0.45})`;
+        ctx.lineWidth = p.size * tf * 0.5;
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(px, py, p.size * (0.45 + frac * 0.7), 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${p.hue},88%,65%,0.82)`;
+      ctx.fill();
+    });
+
+    // phase-lock ring
+    if (score > 68) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, 58, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(205,185,255,${(score - 68) / 32 * 0.7})`;
+      ctx.lineWidth = 2 + (score - 68) / 12;
+      ctx.stroke();
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  let at = 0;
+  setInterval(() => { at += 0.022; target = (Math.sin(at) * 0.5 + 0.5) * 72 + 12; }, 50);
+
+  window.addEventListener('resize', resize);
+  resize();
+  frame();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   GESTURE DETECTORS
+═══════════════════════════════════════════════════════════ */
+class GroundswellDetector {
+  constructor() {
+    this.score = 0;
+    this._holdStart = null;
+    this._holding   = false;
+  }
+  update(pitchDeg) {
+    const isPitched = pitchDeg > 15;
+    const now = Date.now();
+    if (isPitched && !this._holding) {
+      this._holdStart = now;
+      this._holding   = true;
+    } else if (!isPitched) {
+      this._holding = false;
+    }
+    if (this._holding) {
+      const held = now - this._holdStart;
+      if (held >= 1500) {
+        const intensity = clamp((pitchDeg - 15) / 30, 0, 1);
+        const bonus     = clamp((held - 1500) / 8000, 0, 0.5);
+        this.score = clamp(this.score + (intensity + bonus) * 1.8, 0, 100);
+      }
+    } else {
+      this.score = Math.max(0, this.score - 0.4);
+    }
+    return this.score;
+  }
+}
+
+class TremorDetector {
+  constructor() {
+    this.score   = 0;
+    this._history = [];
+  }
+  update(rollDeg, ts) {
+    this._history.push({ v: rollDeg, t: ts });
+    const cutoff = ts - 1000;
+    this._history = this._history.filter(e => e.t > cutoff);
+    if (this._history.length < 4) return this.score;
+    let reversals = 0, amplitude = 0;
+    for (let i = 1; i < this._history.length - 1; i++) {
+      const prev = this._history[i - 1].v;
+      const curr = this._history[i].v;
+      const next = this._history[i + 1].v;
+      if ((curr - prev) * (next - curr) < 0) {
+        reversals++;
+        amplitude += Math.abs(curr - prev);
+      }
+    }
+    if (reversals >= 3 && reversals <= 10 && amplitude > 5) {
+      const fs = clamp((reversals - 3) / 4, 0, 1);
+      const as = clamp((amplitude - 5) / 28, 0, 1);
+      this.score = clamp(this.score + (fs + as) * 2.5, 0, 100);
+    } else {
+      this.score = Math.max(0, this.score - 0.6);
+    }
+    return this.score;
+  }
+}
+
+class OrbitDetector {
+  constructor() {
+    this.score    = 0;
+    this.direction = 0;
+    this._lastYaw  = null;
+    this._arc      = 0;
+    this._startTs  = null;
+  }
+  update(yawDeg, ts) {
+    if (this._lastYaw === null) { this._lastYaw = yawDeg; this._startTs = ts; return { score: 0, dir: 'none' }; }
+    let delta = yawDeg - this._lastYaw;
+    if (delta >  180) delta -= 360;
+    if (delta < -180) delta += 360;
+    this._lastYaw = yawDeg;
+    if (Math.abs(delta) > 0.5) {
+      const newDir = delta > 0 ? 1 : -1;
+      if (this.direction === 0) this.direction = newDir;
+      if (newDir === this.direction) {
+        this._arc += Math.abs(delta);
+      } else {
+        this._arc = 0; this.direction = newDir; this._startTs = ts;
+      }
+      const elapsed = ts - this._startTs;
+      if (this._arc >= 270 && elapsed >= 2000 && elapsed <= 8000) {
+        this.score = clamp(this.score + 2, 0, 100);
+      } else if (this._arc < 90) {
+        this.score = Math.max(0, this.score - 0.5);
+      }
+    } else {
+      this.score = Math.max(0, this.score - 0.35);
+    }
+    return { score: this.score, dir: this.direction > 0 ? 'cw' : 'ccw' };
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   DEMO CANVAS VISUALISER
+═══════════════════════════════════════════════════════════ */
+function createDemoViz() {
+  const canvas = document.getElementById('demo-canvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H, t = 0;
+  const scores = { gs: 0, tr: 0, or: 0 };
+
+  function resize() {
+    fitCanvas(canvas);
+    W = canvas.width; H = canvas.height;
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    const cx = W / 2, cy = H / 2;
+    t += 0.016;
+    ctx.fillStyle = '#060c14'; ctx.fillRect(0, 0, W, H);
+
+    const gs = scores.gs / 100;
+    const tr = scores.tr / 100;
+    const or = scores.or / 100;
+
+    // GROUNDSWELL — waves
+    if (gs > 0.01) {
+      for (let i = 0; i < 3; i++) {
+        const wY = H * (0.72 + i * 0.1);
+        ctx.beginPath(); ctx.moveTo(0, wY);
+        for (let x = 0; x <= W; x += 4) {
+          ctx.lineTo(x, wY + Math.sin(x * 0.014 + t * (1 + i * 0.28)) * (18 + gs * 28));
+        }
+        ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+        ctx.fillStyle = `rgba(28,98,168,${gs * (0.22 - i * 0.05)})`;
+        ctx.fill();
+      }
+    }
+
+    // TREMOR — interference rings
+    if (tr > 0.01) {
+      const n = Math.floor(tr * 5) + 1;
+      for (let i = 0; i < n; i++) {
+        const phase = (t * (2.8 + i * 0.65) + i * 0.9) % (Math.PI * 2);
+        const rx = cx + Math.sin(phase + i) * W * 0.22;
+        const ry = cy + Math.cos(phase * 0.7 + i) * H * 0.18;
+        const r  = 18 + Math.sin(t * 4.5 + i) * 9 * tr + i * 14;
+        ctx.beginPath(); ctx.arc(rx, ry, r, 0, Math.PI * 2);
+        ctx.strokeStyle = `hsla(${lerp(210, 10, tr)},78%,58%,${tr * 0.5})`;
+        ctx.lineWidth = 1.5; ctx.stroke();
+      }
+    }
+
+    // ORBIT — ring + particles
+    if (or > 0.01) {
+      const n = Math.floor(or * 18) + 4;
+      for (let i = 0; i < n; i++) {
+        const angle = (i / n) * Math.PI * 2 + t * (0.5 + or * 0.55);
+        const r = (38 + or * 38) * (1 - i * 0.012);
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r * 0.52,
+                2 + or * 2, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${lerp(42, 168, i / n)},85%,65%,${or * 0.82})`;
+        ctx.fill();
+      }
+      const glw = ctx.createRadialGradient(cx, cy, 0, cx, cy, 28 + or * 18);
+      glw.addColorStop(0, `rgba(180,155,255,${or * 0.28})`);
+      glw.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = glw; ctx.fillRect(0, 0, W, H);
+    }
+
+    // active label
+    const best = Object.entries(scores).sort((a, b) => b[1] - a[1])[0];
+    if (best[1] > 8) {
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.font = `${clamp(W * 0.042, 11, 17)}px monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText({ gs: 'GROUNDSWELL', tr: 'TREMOR', or: 'ORBIT' }[best[0]], cx, 26);
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('resize', resize);
+  resize(); frame();
+  return { set(s) { Object.assign(scores, s); } };
+}
+
+/* ════════════════════════════════════════════════════════════
+   MOTION INPUT
+═══════════════════════════════════════════════════════════ */
+function initMotion(viz) {
+  const statusEl = document.getElementById('demo-status');
+  const permBtn  = document.getElementById('perm-btn');
+  const instrEl  = document.getElementById('demo-instr');
+
+  const gsDet = new GroundswellDetector();
+  const trDet = new TremorDetector();
+  const orDet = new OrbitDetector();
+
+  function updateUI(gs, tr, or_) {
+    const clampScore = v => clamp(Math.round(v), 0, 100);
+    const gsS = clampScore(gs), trS = clampScore(tr), orS = clampScore(or_);
+    document.getElementById('val-gs').textContent = gsS;
+    document.getElementById('val-tr').textContent = trS;
+    document.getElementById('val-or').textContent = orS;
+    document.getElementById('bar-gs').style.width = gsS + '%';
+    document.getElementById('bar-tr').style.width = trS + '%';
+    document.getElementById('bar-or').style.width = orS + '%';
+    viz.set({ gs: gsS, tr: trS, or: orS });
+  }
+
+  const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+  if (isMobile && (window.DeviceOrientationEvent || window.DeviceMotionEvent)) {
+    statusEl.textContent = '📱 Mobile device detected — tap to enable sensors';
+    permBtn.style.display = 'flex';
+    instrEl.innerHTML = `
+      <h4>Mobile Controls</h4>
+      <ul>
+        <li><strong>GROUNDSWELL</strong>: Tilt phone forward (top edge down) and hold ≥ 1.5 s</li>
+        <li><strong>TREMOR</strong>: Rapidly shake phone left and right</li>
+        <li><strong>ORBIT</strong>: Hold phone flat and rotate it in a circle</li>
+      </ul>`;
+
+    permBtn.addEventListener('click', async () => {
+      try {
+        if (typeof DeviceOrientationEvent !== 'undefined' &&
+            typeof DeviceOrientationEvent.requestPermission === 'function') {
+          const res = await DeviceOrientationEvent.requestPermission();
+          if (res !== 'granted') { statusEl.textContent = '⚠ Permission denied'; return; }
+        }
+        startDevice();
+        permBtn.style.display = 'none';
+      } catch (err) {
+        statusEl.textContent = '⚠ Could not access sensors: ' + err.message;
+      }
+    });
+  } else {
+    statusEl.textContent = '🖥 Desktop mode — use mouse to simulate gestures';
+    statusEl.classList.add('on');
+    initMouse();
+  }
+
+  function startDevice() {
+    statusEl.textContent = '✓ Motion sensors active — try the gestures!';
+    statusEl.classList.add('on');
+    let beta = 0, gamma = 0, alpha = 0;
+    window.addEventListener('deviceorientation', e => {
+      beta  = e.beta  || 0;
+      gamma = e.gamma || 0;
+      alpha = e.alpha || 0;
+      const gs = gsDet.update(beta);
+      const { score: or } = orDet.update(alpha, Date.now());
+      updateUI(gs, trDet.score, or);
+    });
+    window.addEventListener('devicemotion', e => {
+      if (e.rotationRate) {
+        const tr = trDet.update(e.rotationRate.gamma || 0, Date.now());
+        updateUI(gsDet.score, tr, orDet.score);
+      }
+    });
+  }
+
+  function initMouse() {
+    const canvas = document.getElementById('demo-canvas');
+    let pressed = false, lastX = 0, lastY = 0;
+    let pitch = 0, history = [];
+    let simYaw = 0;
+
+    canvas.style.cursor = 'crosshair';
+    canvas.addEventListener('mousedown', e => { pressed = true; lastX = e.clientX; lastY = e.clientY; });
+    canvas.addEventListener('mouseup',   () => { pressed = false; });
+    canvas.addEventListener('mouseleave',() => { pressed = false; });
+
+    canvas.addEventListener('mousemove', e => {
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      const now = Date.now();
+
+      // GROUNDSWELL: drag upward
+      if (pressed) {
+        pitch = clamp(pitch - dy * 0.5, 0, 65);
+      } else {
+        pitch = Math.max(0, pitch - 1.2);
+      }
+
+      // TREMOR: rapid horizontal movement
+      history.push({ x: e.clientX, t: now });
+      history = history.filter(p => now - p.t < 800);
+      if (history.length > 3) {
+        const totalMov = history.slice(-6).reduce((s, p, i, a) =>
+          s + (i > 0 ? Math.abs(p.x - a[i - 1].x) : 0), 0);
+        if (totalMov > 30) trDet.update(dx * 8, now);
+        else trDet.update(0, now);
+      }
+
+      // ORBIT: circular mouse motion
+      if (history.length >= 5) {
+        const recent = history.slice(-8);
+        const mcx = recent.reduce((s, p) => s + p.x, 0) / recent.length;
+        const mcy = e.clientY; // approximate
+        const prev = recent[recent.length - 2];
+        if (prev) {
+          let dA = (Math.atan2(lastY - mcy, e.clientX - mcx) -
+                    Math.atan2(lastY - mcy, prev.x - mcx)) * 180 / Math.PI;
+          if (dA > 180) dA -= 360;
+          if (dA < -180) dA += 360;
+          simYaw = (simYaw + dA) % 360;
+          orDet.update(simYaw, now);
+        }
+      }
+
+      lastX = e.clientX; lastY = e.clientY;
+    });
+
+    // touch support (basic)
+    canvas.addEventListener('touchmove', e => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      canvas.dispatchEvent(new MouseEvent('mousemove', { clientX: touch.clientX, clientY: touch.clientY }));
+    }, { passive: false });
+    canvas.addEventListener('touchstart', e => {
+      const touch = e.touches[0];
+      canvas.dispatchEvent(new MouseEvent('mousedown', { clientX: touch.clientX, clientY: touch.clientY }));
+    });
+    canvas.addEventListener('touchend', () => {
+      canvas.dispatchEvent(new MouseEvent('mouseup'));
+    });
+
+    function tick() {
+      updateUI(gsDet.update(pitch), trDet.score, orDet.score);
+      setTimeout(tick, 50);
+    }
+    tick();
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════════════════════ */
+const demoViz = createDemoViz();
+initMotion(demoViz);
+</script>
+</body>
+</html>
